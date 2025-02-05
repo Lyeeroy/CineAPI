@@ -22,207 +22,48 @@
         background: gray !important;
         cursor: not-allowed !important;
       }
-
-      @media (max-width: 768px) {
-        .md:flex {
-          flex-direction: column;
-        }
-
-        .md:flex-col {
-          flex-direction: column;
-        }
-
-        .md:w-1/3 {
-          width: 100%;
-        }
-
-        .md:w-96 {
-          width: 100%;
-        }
-
-        #video-container {
-          height: 200px;
-        }
-
-        #video-player {
-          height: 200px;
-        }
-
-        .md:flex-row {
-          flex-direction: column;
-        }
-
-        .md:space-x-2 {
-          margin: 0.5rem 0;
-        }
-
-        .md:space-y-2 {
-          margin: 0.5rem 0;
-        }
-
-        .md:mt-6 {
-          margin-top: 1.5rem;
-        }
-
-        .md:mb-6 {
-          margin-bottom: 1.5rem;
-        }
-
-        #playlist {
-          max-height: 300px;
-          overflow-y: auto;
-        }
-      }
     </style>
   </head>
 
   <body class="bg-white text-black">
-    <div class="flex flex-col md:flex-row h-screen">
+    <div class="lg:flex flex-col md:flex-row h-screen">
       <div id="video-container" class="flex-1 bg-black relative">
         <iframe
           id="video-player"
-          class="w-full h-full"
+          class="w-full h-[60vh] sm:h-[90vh] lg:h-full sm:w-full lg:w-full"
           frameborder="0"
           allowfullscreen
         ></iframe>
       </div>
 
       <div
-        class="md:flex md:flex-col w-full md:w-1/3 bg-white p-4 shadow-xl border-t md:border-l border-gray-300 md:w-96"
+        class="md:flex md:flex-col w-full lg:w-1/3 bg-white p-4 shadow-xl border-t md:border-l border-gray-300 lg:w-96 overflow-y-auto"
       >
         <label for="season-select" class="text-sm font-semibold">Source:</label>
-        <div class="flex items-center justify-between mb-4">
+
+        <div class="flex items-center">
           <button
             id="prev-server"
-            class="p-2 bg-black text-white rounded-full hover:bg-gray-400 transition duration-300"
+            class="px-4 py-2 bg-gray-200 text-black rounded-l-lg active:bg-gray-300 transition"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                clip-rule="evenodd"
-              />
-            </svg>
+            &#8249;
           </button>
           <select
             id="server-select"
-            class="flex-1 mx-2 p-2 rounded bg-gray-200 text-black outline-none appearance-none"
+            class="px-4 py-2 w-full bg-gray-200 text-black outline-none appearance-none"
           ></select>
           <button
             id="next-server"
-            class="p-2 bg-black text-white rounded-full hover:bg-gray-400 transition duration-300"
+            class="px-4 py-2 bg-gray-200 text-black rounded-r-lg active:bg-gray-300 transition"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clip-rule="evenodd"
-              />
-            </svg>
+            &#8250;
           </button>
           <button
             id="editButton"
-            class="bg-black text-white ml-2 px-4 py-2 rounded-lg"
+            class="ml-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition"
           >
             Edit
           </button>
-
-          <div
-            id="url-list-frame"
-            class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30"
-          >
-            <div
-              class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-xl relative"
-            >
-              <button
-                id="close-frame"
-                class="absolute top-2 right-2 text-black text-xl"
-              >
-                ✕
-              </button>
-              <h1 class="text-3xl font-bold mb-6 text-center">
-                📋 URL List Manager
-              </h1>
-              <div id="url-list" class="space-y-3"></div>
-              <button
-                id="add-url"
-                class="bg-black text-white px-4 py-2 rounded-lg mt-3 w-full"
-              >
-                + Add URL
-              </button>
-
-              <div class="mt-6 space-y-2">
-                <div class="flex space-x-2">
-                  <button
-                    id="export-btn"
-                    class="bg-black text-white px-4 py-2 rounded-lg w-1/2"
-                  >
-                    ↑ Export
-                  </button>
-                  <button
-                    id="import-btn"
-                    class="bg-black text-white px-4 py-2 rounded-lg w-1/2"
-                  >
-                    ↓ Import
-                  </button>
-                </div>
-                <textarea
-                  id="import-input"
-                  placeholder="Paste code to import or see exported code here"
-                  class="border p-3 rounded-lg w-full mt-2 h-24 resize-none"
-                ></textarea>
-              </div>
-
-              <div class="mt-6">
-                <button
-                  id="debug-btn"
-                  class="bg-black text-white px-4 py-2 rounded-lg w-full"
-                >
-                  🛠 Developer Debug Panel
-                </button>
-              </div>
-              <a
-                id="full-scale-link"
-                class="text-sm text-gray-500 flex justify-center mt-4 hover:text-black"
-                >Full scale version</a
-              >
-
-              <script>
-                const link = document.getElementById("full-scale-link");
-                const path = window.location.pathname
-                  .split("/")
-                  .slice(0, -1)
-                  .join("/");
-                link.href = `${path}/apis.html`;
-              </script>
-
-              <div
-                id="debug-panel"
-                class="hidden fixed top-10 left-1/2 transform -translate-x-1/2 bg-white border rounded-2xl shadow-2xl p-6 w-96 z-20"
-              >
-                <h2 class="text-2xl font-bold mb-4 text-center">
-                  Debug Panel 📝
-                </h2>
-                <div id="debug-info" class="text-sm space-y-4"></div>
-                <button
-                  id="close-debug"
-                  class="bg-black text-white px-4 py-2 rounded-lg w-full mt-4"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
 
         <label
@@ -236,7 +77,10 @@
           class="w-full p-2 rounded bg-gray-200 text-black mb-4"
         ></select>
 
-        <div id="playlist" class="space-y-2 overflow-y-auto flex-1"></div>
+        <div
+          id="playlist"
+          class="space-y-2 overflow-y-auto flex-1 sm:max-h-[50vh] lg:max-h-none"
+        ></div>
 
         <div class="flex justify-between text-white bg-white rounded-t-xl mt-2">
           <button
@@ -250,6 +94,83 @@
             class="w-1/2 p-2 ml-1 bg-black text-white rounded"
           >
             Next
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="url-list-frame"
+      class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30"
+    >
+      <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-xl relative">
+        <button
+          id="close-frame"
+          class="absolute top-2 right-2 text-black text-xl"
+        >
+          ✕
+        </button>
+        <h1 class="text-3xl font-bold mb-6 text-center">📋 URL List Manager</h1>
+        <div id="url-list" class="space-y-3"></div>
+        <button
+          id="add-url"
+          class="bg-black text-white px-4 py-2 rounded-lg mt-3 w-full"
+        >
+          + Add URL
+        </button>
+        <div class="mt-6 space-y-2">
+          <div class="flex space-x-2">
+            <button
+              id="export-btn"
+              class="bg-black text-white px-4 py-2 rounded-lg w-1/2"
+            >
+              ↑ Export
+            </button>
+            <button
+              id="import-btn"
+              class="bg-black text-white px-4 py-2 rounded-lg w-1/2"
+            >
+              ↓ Import
+            </button>
+          </div>
+          <textarea
+            id="import-input"
+            placeholder="Paste code to import or see exported code here"
+            class="border p-3 rounded-lg w-full mt-2 h-24 resize-none"
+          ></textarea>
+        </div>
+        <div class="mt-6">
+          <button
+            id="debug-btn"
+            class="bg-black text-white px-4 py-2 rounded-lg w-full"
+          >
+            🛠 Developer Debug Panel
+          </button>
+        </div>
+        <a
+          id="full-scale-link"
+          class="text-sm text-gray-500 flex justify-center mt-4 hover:text-black"
+          >Full scale version</a
+        >
+        <script>
+          const link = document.getElementById("full-scale-link");
+          const path = window.location.pathname
+            .split("/")
+            .slice(0, -1)
+            .join("/");
+          link.href = `${path}/apis.html`;
+        </script>
+        <div
+          id="debug-panel"
+          class="hidden fixed top-10 left-1/2 transform -translate-x-1/2 bg-white border rounded-2xl shadow-2xl p-6 w-96 z-20"
+        >
+          <h2 class="text-2xl font-bold mb-4 text-center">Debug Panel 📝</h2>
+          <div id="debug-info" class="text-sm space-y-4"></div>
+          <button
+            id="close-debug"
+            class="bg-black text-white px-4 py-2 rounded-lg w-full mt-4"
+          >
+            Close
           </button>
         </div>
       </div>
