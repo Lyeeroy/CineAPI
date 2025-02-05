@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ToastToast</title>
+    <title>ToastToast Mobile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       body {
@@ -23,176 +23,58 @@
       }
     </style>
   </head>
-
-  <body class="bg-white text-black">
-    <div class="flex flex-col md:flex-row h-screen">
-      <div id="video-container" class="flex-1 bg-black relative">
-        <iframe
-          id="video-player"
-          class="w-full h-full"
-          frameborder="0"
-          allowfullscreen
-        ></iframe>
-      </div>
-
-      <div
-        class="md:flex md:flex-col w-full md:w-1/3 bg-white p-4 shadow-xl border-t md:border-l border-gray-300 md:w-96"
-      >
-        <label for="season-select" class="text-sm font-semibold">Source:</label>
-        <div class="flex items-center justify-between mb-4">
-          <button
-            id="prev-server"
-            class="p-2 bg-black text-white rounded-full hover:bg-gray-400 transition duration-300"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </button>
-          <select
-            id="server-select"
-            class="flex-1 mx-2 p-2 rounded bg-gray-200 text-black outline-none appearance-none"
-          ></select>
-          <button
-            id="next-server"
-            class="p-2 bg-black text-white rounded-full hover:bg-gray-400 transition duration-300"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </button>
-          <button
-            id="editButton"
-            class="bg-black text-white ml-2 px-4 py-2 rounded-lg"
-          >
-            Edit
-          </button>
-
-          <div
-            id="url-list-frame"
-            class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30"
-          >
-            <div
-              class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-xl relative"
-            >
-              <button
-                id="close-frame"
-                class="absolute top-2 right-2 text-black text-xl"
-              >
-                ✕
-              </button>
-              <h1 class="text-3xl font-bold mb-6 text-center">
-                📋 URL List Manager
-              </h1>
-              <div id="url-list" class="space-y-3"></div>
-              <button
-                id="add-url"
-                class="bg-black text-white px-4 py-2 rounded-lg mt-3 w-full"
-              >
-                + Add URL
-              </button>
-
-              <div class="mt-6 space-y-2">
-                <div class="flex space-x-2">
-                  <button
-                    id="export-btn"
-                    class="bg-black text-white px-4 py-2 rounded-lg w-1/2"
-                  >
-                    ↑ Export
-                  </button>
-                  <button
-                    id="import-btn"
-                    class="bg-black text-white px-4 py-2 rounded-lg w-1/2"
-                  >
-                    ↓ Import
-                  </button>
-                </div>
-                <textarea
-                  id="import-input"
-                  placeholder="Paste code to import or see exported code here"
-                  class="border p-3 rounded-lg w-full mt-2 h-24 resize-none"
-                ></textarea>
-              </div>
-
-              <div class="mt-6">
-                <button
-                  id="debug-btn"
-                  class="bg-black text-white px-4 py-2 rounded-lg w-full"
-                >
-                  🛠 Developer Debug Panel
-                </button>
-              </div>
-              <a
-                href="/apis.html"
-                class="text-sm text-gray-500 flex justify-center mt-4 hover:text-black"
-                >Full scale version</a
-              >
-              <div
-                id="debug-panel"
-                class="hidden fixed top-10 left-1/2 transform -translate-x-1/2 bg-white border rounded-2xl shadow-2xl p-6 w-96 z-20"
-              >
-                <h2 class="text-2xl font-bold mb-4 text-center">
-                  Debug Panel 📝
-                </h2>
-                <div id="debug-info" class="text-sm space-y-4"></div>
-                <button
-                  id="close-debug"
-                  class="bg-black text-white px-4 py-2 rounded-lg w-full mt-4"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <label
-          id="season-label"
-          for="season-select"
-          class="text-sm font-semibold"
-          >Season:</label
-        >
-        <select
-          id="season-select"
-          class="w-full p-2 rounded bg-gray-200 text-black mb-4"
-        ></select>
-
-        <div id="playlist" class="space-y-2 overflow-y-auto flex-1"></div>
-
-        <div class="flex justify-between text-white bg-white rounded-t-xl mt-2">
-          <button
-            id="prev-episode"
-            class="w-1/2 p-2 mr-1 bg-black text-white rounded"
-          >
-            Previous
-          </button>
-          <button
-            id="next-episode"
-            class="w-1/2 p-2 ml-1 bg-black text-white rounded"
-          >
-            Next
-          </button>
-        </div>
-      </div>
+  <body class="bg-white text-black h-screen flex flex-col">
+    <div id="video-container" class="flex-1 bg-black relative">
+      <iframe
+        id="video-player"
+        class="w-full h-full"
+        frameborder="0"
+        allowfullscreen
+      ></iframe>
     </div>
+
+    <div
+      class="bg-white shadow-xl border-t border-gray-300 flex items-center justify-between p-2"
+    >
+      <button id="prev-episode" class="p-2 bg-black text-white rounded-full">
+        ◀
+      </button>
+      <button id="playlist-btn" class="p-2 bg-gray-200 text-black rounded-full">
+        Playlist
+      </button>
+      <button id="next-episode" class="p-2 bg-black text-white rounded-full">
+        ▶
+      </button>
+    </div>
+
+    <div
+      id="playlist-container"
+      class="hidden bg-white shadow-xl border-t border-gray-300 overflow-y-auto h-1/2"
+    >
+      <div id="playlist" class="space-y-2 p-2"></div>
+    </div>
+
+    <script>
+      const videoContainer = document.getElementById("video-container");
+      const playlistContainer = document.getElementById("playlist-container");
+      const playlistBtn = document.getElementById("playlist-btn");
+
+      let startY = 0;
+
+      videoContainer.addEventListener("touchstart", (e) => {
+        startY = e.touches[0].clientY;
+      });
+
+      videoContainer.addEventListener("touchmove", (e) => {
+        const currentY = e.touches[0].clientY;
+        if (startY - currentY > 50) {
+          playlistContainer.classList.remove("hidden");
+        }
+      });
+
+      playlistBtn.addEventListener("click", () => {
+        playlistContainer.classList.toggle("hidden");
+      });
+    </script>
   </body>
-  <script src="edit.js"></script>
-  <script src="player.js"></script>
 </html>

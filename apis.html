@@ -137,15 +137,13 @@ Example:https://example.com</pre
       const maxUrls = 999;
 
       function saveData() {
-        document.cookie = `urlList=${encodeURIComponent(
-          JSON.stringify(getUrlList())
-        )};path=/`;
+        localStorage.setItem("urlList", JSON.stringify(getUrlList()));
       }
 
-      function loadData() {
-        const match = document.cookie.match(/urlList=([^;]+)/);
-        return match ? JSON.parse(decodeURIComponent(match[1])) : [];
-      }
+      const loadData = () => {
+        const data = localStorage.getItem("urlList");
+        return data ? JSON.parse(data) : [];
+      };
 
       function getUrlList() {
         return Array.from(document.querySelectorAll(".url-input")).map(
