@@ -125,6 +125,14 @@ document.getElementById("editButton").onclick = () => {
 
 document.getElementById("close-frame").onclick = () => {
   document.getElementById("url-list-frame").classList.add("hidden");
+  populateServerOptions(); // Refresh server-select options
 };
 
 loadData().forEach(addUrl);
+
+function populateServerOptions() {
+  const serverSelect = document.getElementById("server-select");
+  serverSelect.innerHTML = getUrlList()
+    .map((url, index) => `<option value="${index}">${url}</option>`)
+    .join("");
+}

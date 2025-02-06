@@ -3,22 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>URL List Manager</title>
+    <title>CineAPI</title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="bg-gray-50 text-gray-900 p-6">
-    <div class="max-w-xl mx-auto">
-      <h1 class="text-3xl font-bold mb-6 text-center">📋 URL List Manager</h1>
-      <div id="url-list" class="space-y-3"></div>
-      <button
-        id="add-url"
-        class="bg-black text-white px-4 py-2 rounded-lg mt-3 w-full"
-      >
-        + Add URL
-      </button>
-
-      <div class="mt-6 space-y-2">
-        <div class="flex space-x-2">
+    <div class="w-full mx-auto md:w-1/2 flex flex-col">
+      <h1 class="text-3xl font-bold mb-6 text-center p-4">
+        📋 URL List Manager
+      </h1>
+      <div
+        id="url-list"
+        class="flex-1 p-4 space-y-3 overflow-y-auto border rounded-lg max-h-[40vh] min-h-[40vh]"
+      ></div>
+      <div class="p-4 border-t mt-4 flex-shrink-0">
+        <button
+          id="add-url"
+          class="bg-black text-white px-4 py-3 rounded-lg w-full"
+        >
+          + Add URL
+        </button>
+        <div class="mt-4 flex space-x-2">
           <button
             id="export-btn"
             class="bg-black text-white px-4 py-2 rounded-lg w-1/2"
@@ -35,91 +39,31 @@
         <textarea
           id="import-input"
           placeholder="Paste code to import or see exported code here"
-          class="border p-3 rounded-lg w-full mt-2 h-24 resize-none"
+          class="border p-3 rounded-lg w-full mt-3 h-24 resize-none"
         ></textarea>
-      </div>
-
-      <div class="mt-6">
+        <button
+          id="close-btn"
+          class="bg-black text-white px-4 py-2 rounded-lg w-full mt-4 hover:bg-red-700"
+          onclick="window.location.href = 'index.html'"
+        >
+          Close
+        </button>
         <button
           id="debug-btn"
-          class="bg-black text-white px-4 py-2 rounded-lg w-full"
+          class="bg-black text-white px-4 py-2 rounded-lg w-full mt-4"
         >
           🛠 Debug Panel
         </button>
-      </div>
-
-      <button
-        id="close-btn"
-        class="bg-black text-white px-4 py-2 rounded-lg w-full mt-4 hover:bg-red-700"
-        onclick="window.location.href = 'index.html'"
-      >
-        Close
-      </button>
-
-      <div class="mt-6">
-        <button
-          id="toggle-docs"
-          class="bg-black text-white px-4 py-2 rounded-lg w-full flex justify-between items-center"
-        >
-          📖 Documentation <span id="arrow">▼</span>
-        </button>
-        <div
-          id="documentation"
-          class="hidden p-4 bg-white border rounded-lg mt-2"
-        >
-          <h2 class="text-xl font-bold mb-2">Quick Import:</h2>
-          <p>
-            Use the following URL format to import data automatically. If you
-            want to redirect to <code>/index.html</code> after importing, add
-            <code>&redirect=true</code> in the URL.
-          </p>
-          <pre class="bg-gray-100 p-3 rounded-lg text-sm mt-2">
-/apis.html?import={code}&redirect=true</pre
-          >
-
-          <h2 class="text-xl font-bold mt-4 mb-2">URL Syntax:</h2>
-          <pre class="bg-gray-100 p-3 rounded-lg text-sm">
-example.com/#type/#id/#season/#episode</pre
-          >
-          <p class="mb-2 mt-2">Manual Override:</p>
-          <pre class="bg-gray-100 p-3 rounded-lg text-sm">
-example.com/#type&tv=series&movie=film</pre
-          >
-
-          <p class="mt-2">
-            - <strong>#type</strong> is automatically filled as
-            <em>movie</em> or <em>tv show</em> based on the TMDB ID.<br />-
-            <strong>#id</strong>, <strong>#season</strong>, and
-            <strong>#episode</strong> are placeholders that will be replaced
-            dynamically.
-          </p>
-
-          <h2 class="text-xl font-bold mt-4 mb-2">Example:</h2>
-          <pre class="bg-gray-100 p-3 rounded-lg text-sm">
-example.com/movie/12345/1/2</pre
-          >
-          <p class="mt-2">
-            In this example, the <strong>#type</strong> will be movie, the
-            <strong>#id</strong> 12345 will be replaced with the TMDB ID of the
-            movie. The <strong>#season</strong> and
-            <strong>#episode</strong> corresponds to a movie, with season 1 and
-            episode 2.
-          </p>
-          <h2 class="text-xl font-bold mt-4 mb-2">Naming a Source</h2>
-          <pre class="bg-gray-100 p-3 rounded-lg text-sm">
-Example:https://example.com</pre
-          >
-        </div>
-        <p class="text-sm text-center mt-4 opacity-50">
-          Note: The URLs are stored in Local Storage. This page does not hold
-          any data.
+        <p class="text-sm text-gray-500 flex justify-center mt-4">
+          Note: The site isn't storing any data; everything is stored in local
+          storage.
         </p>
       </div>
     </div>
 
     <div
       id="debug-panel"
-      class="hidden fixed top-10 left-1/2 transform -translate-x-1/2 bg-white border rounded-2xl shadow-2xl p-6 w-96 z-20"
+      class="hidden fixed top-10 left-1/2 transform -translate-x-1/2 bg-white border rounded-2xl shadow-2xl p-6 w-96 z-20 max-h-[90vh] overflow-y-auto"
     >
       <h2 class="text-2xl font-bold mb-4 text-center">Debug Panel 📝</h2>
       <div id="debug-info" class="text-sm space-y-4"></div>
@@ -132,77 +76,67 @@ Example:https://example.com</pre
     </div>
 
     <script>
+      const maxUrls = 999;
       const placeholderTags = ["#type", "#id", "#season", "#episode"];
       const placeholderRegex = /#type|#id|#season|#episode/g;
-      const maxUrls = 999;
 
       function saveData() {
         localStorage.setItem("urlList", JSON.stringify(getUrlList()));
       }
 
-      const loadData = () => {
-        const data = localStorage.getItem("urlList");
-        return data ? JSON.parse(data) : [];
-      };
+      function loadData() {
+        return JSON.parse(localStorage.getItem("urlList")) || [];
+      }
 
       function getUrlList() {
-        return Array.from(document.querySelectorAll(".url-input")).map(
+        return Array.from(
+          document.querySelectorAll(".url-input"),
           (input) => input.value
         );
       }
 
       function addUrl(value = "") {
         if (document.querySelectorAll(".url-input").length >= maxUrls) return;
-
         const container = document.createElement("div");
         container.className =
           "flex items-center space-x-2 bg-white p-2 rounded-lg border";
 
-        const moveUpBtn = document.createElement("button");
-        moveUpBtn.innerHTML = "▲";
-        moveUpBtn.className = "text-black px-2 py-1";
-        moveUpBtn.onclick = () => {
+        container.innerHTML = `
+          <button class="text-black px-2 py-1 move-up">▲</button>
+          <button class="text-black px-2 py-1 move-down">▼</button>
+          <input type="text" value="${value}" class="url-input border p-3 rounded-lg flex-1"/>
+          <button class="text-black px-2 py-1 remove">✕</button>
+        `;
+
+        container.querySelector(".move-up").onclick = () => {
           const prev = container.previousElementSibling;
           if (prev) container.parentNode.insertBefore(container, prev);
           saveData();
         };
 
-        const moveDownBtn = document.createElement("button");
-        moveDownBtn.innerHTML = "▼";
-        moveDownBtn.className = "text-black px-2 py-1";
-        moveDownBtn.onclick = () => {
+        container.querySelector(".move-down").onclick = () => {
           const next = container.nextElementSibling;
           if (next) container.parentNode.insertBefore(next, container);
           saveData();
         };
 
-        const input = document.createElement("input");
-        input.type = "text";
-        input.value = value;
-        input.className = "url-input border p-3 rounded-lg flex-1";
-
-        const removeBtn = document.createElement("button");
-        removeBtn.textContent = "✕";
-        removeBtn.className = "text-black px-2 py-1";
-        removeBtn.onclick = () => {
+        container.querySelector(".remove").onclick = () => {
           container.remove();
           saveData();
         };
 
-        container.appendChild(moveUpBtn);
-        container.appendChild(moveDownBtn);
-        container.appendChild(input);
-        container.appendChild(removeBtn);
+        container
+          .querySelector(".url-input")
+          .addEventListener("input", saveData);
         document.getElementById("url-list").appendChild(container);
-
-        input.addEventListener("input", saveData);
       }
 
       document.getElementById("add-url").onclick = () => addUrl();
 
       document.getElementById("export-btn").onclick = () => {
-        const data = btoa(JSON.stringify(getUrlList()));
-        document.getElementById("import-input").value = data;
+        document.getElementById("import-input").value = btoa(
+          JSON.stringify(getUrlList())
+        );
       };
 
       document.getElementById("import-btn").onclick = () => {
@@ -211,84 +145,48 @@ Example:https://example.com</pre
             atob(document.getElementById("import-input").value)
           );
           document.getElementById("url-list").innerHTML = "";
-          data.forEach((url) => addUrl(url));
+          data.forEach(addUrl);
           saveData();
-        } catch (e) {
+        } catch {
           alert("Incorrect format");
         }
       };
 
-      const params = new URLSearchParams(window.location.search);
-      const importCode = params.get("import");
-      const redirect = params.get("redirect") === "true";
-
-      if (importCode) {
-        try {
-          const data = JSON.parse(atob(importCode));
-          document.getElementById("url-list").innerHTML = "";
-          data.forEach((url) => addUrl(url));
-          saveData();
-          if (redirect) {
-            window.location.href = "index.html";
-          }
-        } catch (e) {
-          console.error("Failed to import automatically", e);
-        }
-      } else {
-        loadData().forEach(addUrl);
-      }
+      loadData().forEach(addUrl);
 
       document.getElementById("debug-btn").onclick = () => {
         const debugInfo = document.getElementById("debug-info");
-        debugInfo.innerHTML = "";
-        getUrlList().forEach((url, index) => {
-          const placeholders = [...url.matchAll(placeholderRegex)].map(
-            (match) => match[0]
-          );
-          const uniquePlaceholders = [...new Set(placeholders)];
-          const missing = placeholderTags.filter(
-            (tag) => !uniquePlaceholders.includes(tag)
-          );
-          const completeness = `${uniquePlaceholders.length}/4`;
-
-          debugInfo.innerHTML += `<div class="p-3 border rounded-lg bg-gray-50">
-                      <strong class="text-black">URL ${
-                        index + 1
-                      }:</strong> <a href="${url}" class="text-black underline break-all" target="_blank">${url}</a><br>
-                      <span>📍 Placeholders found: <strong>${
-                        uniquePlaceholders.length
-                          ? uniquePlaceholders.join(", ")
-                          : "None"
-                      }</strong></span><br>
-                      <span>✅ Completeness: <strong>${completeness}</strong>${
-            missing.length ? ` (❌ Missing: ${missing.join(", ")})` : ""
-          }</span><br>
-                      <span>🔍 Valid: <strong>${
-                        uniquePlaceholders.length === placeholderTags.length
-                          ? "Yes"
-                          : "No"
-                      }</strong></span>
+        debugInfo.innerHTML =
+          getUrlList()
+            .map((url, index) => {
+              const found = [...url.matchAll(placeholderRegex)].map(
+                (m) => m[0]
+              );
+              const missing = placeholderTags.filter(
+                (tag) => !found.includes(tag)
+              );
+              return `<div class="p-3 border rounded-lg bg-gray-50">
+                    <strong>URL ${
+                      index + 1
+                    }:</strong> <a href="${url}" class="underline break-all" target="_blank">${url}</a><br>
+                    📍 Placeholders found: <strong>${
+                      found.length ? found.join(", ") : "None"
+                    }</strong><br>
+                    ✅ Completeness: <strong>${found.length}/4</strong> ${
+                missing.length ? `(❌ Missing: ${missing.join(", ")})` : ""
+              }<br>
+                    🔍 Valid: <strong>${
+                      found.length === placeholderTags.length ? "Yes" : "No"
+                    }</strong>
                   </div>`;
-        });
-        debugInfo.innerHTML += `<div class="text-center mt-4 text-gray-600">💾 Data stored in cookies as 'urlList'</div>`;
+            })
+            .join("") +
+          '<div class="text-center mt-4 text-gray-600">💾 Data stored in local storage as "urlList"</div>';
         document.getElementById("debug-panel").classList.remove("hidden");
       };
 
       document.getElementById("close-debug").onclick = () => {
         document.getElementById("debug-panel").classList.add("hidden");
-      };
-
-      document.addEventListener("keydown", (event) => {
-        if (event.ctrlKey && event.shiftKey && event.key === "D") {
-          document.getElementById("debug-btn").click();
-        }
-      });
-
-      document.getElementById("toggle-docs").onclick = () => {
-        const docs = document.getElementById("documentation");
-        const arrow = document.getElementById("arrow");
-        docs.classList.toggle("hidden");
-        arrow.textContent = docs.classList.contains("hidden") ? "▼" : "▲";
       };
     </script>
   </body>
