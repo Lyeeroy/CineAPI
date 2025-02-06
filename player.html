@@ -22,6 +22,39 @@
         background: gray !important;
         cursor: not-allowed !important;
       }
+      .responsive-container {
+        width: 100%; /* Default width */
+        height: 90vh; /* Default height for horizontal orientation */
+      }
+
+      /*mobile devices in portrait orientation */
+      @media (max-width: 640px) and (orientation: portrait) {
+        .responsive-container {
+          height: calc(80vw); /* 16:9 aspect ratio (100vw * 9 / 16) */
+        }
+      }
+
+      /*mobile devices in landscape orientation */
+      @media (max-width: 640px) and (orientation: landscape) {
+        .responsive-container {
+          height: 90vh; /* Maintain 90vh */
+        }
+      }
+
+      /*tablets in portrait orientation */
+      @media (min-width: 641px) and (max-width: 1024px) and (orientation: portrait) {
+        .responsive-container {
+          height: calc(100vw * 9 / 16); /* 16:9 aspect ratio */
+        }
+      }
+
+      /*larger screens */
+      @media (min-width: 1025px) {
+        .responsive-container {
+          height: 100%; /* Full height */
+          width: 100%; /* Full width */
+        }
+      }
     </style>
   </head>
 
@@ -30,7 +63,7 @@
       <div id="video-container" class="flex-1 bg-black relative">
         <iframe
           id="video-player"
-          class="w-full h-[90vh] sm:h-[60vh] sm:h-[calc(100vw*9/16)] lg:h-full sm:w-full lg:w-full"
+          class="responsive-container"
           frameborder="0"
           allowfullscreen
         ></iframe>
@@ -111,7 +144,7 @@
           ✕
         </button>
         <h1 class="text-3xl font-bold mb-6 text-center">📋 URL List Manager</h1>
-        <div id="url-list" class="space-y-3"></div>
+        <div id="url-list" class="space-y-3 max-h-[50vh] overflow-y-auto"></div>
         <button
           id="add-url"
           class="bg-black text-white px-4 py-2 rounded-lg mt-3 w-full"
