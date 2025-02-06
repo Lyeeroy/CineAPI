@@ -136,6 +136,18 @@
       id="url-list-frame"
       class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30"
     >
+      <!-- Orientation Message -->
+      <div
+        id="orientation-message"
+        class="hidden fixed top-0 left-0 right-0 bg-red-500 text-white text-center p-2 z-40"
+      >
+        Your screen is not supported yet. If you want to set APIs, go into
+        <a href="#" id="full-scale-link-message" class="underline"
+          >Full scale mode</a
+        >
+        or try vertical screen.
+      </div>
+
       <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-xl relative">
         <button
           id="close-frame"
@@ -144,7 +156,10 @@
           ✕
         </button>
         <h1 class="text-3xl font-bold mb-6 text-center">📋 URL List Manager</h1>
-        <div id="url-list" class="space-y-3 max-h-[50vh] overflow-y-auto"></div>
+        <div
+          id="url-list"
+          class="space-y-3 max-h-[40vh] md:max-h-[35vh] sm:max-h-[40vh] lg:max-h-[50vh] overflow-y-auto"
+        ></div>
         <button
           id="add-url"
           class="bg-black text-white px-4 py-2 rounded-lg mt-3 w-full"
@@ -192,6 +207,31 @@
             .slice(0, -1)
             .join("/");
           link.href = `${path}/apis.html`;
+
+          // Orientation Detection
+          const orientationMessage = document.getElementById(
+            "orientation-message"
+          );
+          const fullScaleLinkMessage = document.getElementById(
+            "full-scale-link-message"
+          );
+
+          function checkOrientation() {
+            if (window.innerWidth > window.innerHeight) {
+              orientationMessage.classList.remove("hidden");
+            } else {
+              orientationMessage.classList.add("hidden");
+            }
+          }
+
+          // Set the href for the full-scale link in the message
+          fullScaleLinkMessage.href = `${path}/apis.html`;
+
+          // Initial check
+          checkOrientation();
+
+          // Listen for orientation changes
+          window.addEventListener("resize", checkOrientation);
         </script>
         <div
           id="debug-panel"
