@@ -229,3 +229,20 @@ function populateServerOptions() {
 }
 
 populateServerOptions();
+
+const closeButton = document.createElement("button");
+closeButton.textContent = "Close";
+closeButton.className =
+  "p-2 bg-black text-white rounded mt-2 w-full hover:bg-red-700";
+closeButton.style.transition = "background-color 0.3s";
+closeButton.addEventListener("mouseout", () => {
+  closeButton.style.backgroundColor = "";
+});
+closeButton.addEventListener("click", () => {
+  window.location.href = "index.html";
+});
+
+elements["next-episode"].parentNode.insertAdjacentElement(
+  "afterend",
+  closeButton
+);
