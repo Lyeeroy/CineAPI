@@ -247,9 +247,37 @@ elements["next-episode"].parentNode.insertAdjacentElement(
   closeButton
 );
 
-document.addEventListener("fullscreenchange", () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.style.height = "100dvh";
-    document.body.style.height = "100dvh";
-  }
+const iframe = document.getElementById("video-player");
+
+iframe.addEventListener("webkitfullscreenchange", () => {
+  // Safari/iOS
+  toggleBodyOverflow();
 });
+
+iframe.addEventListener("mozfullscreenchange", () => {
+  // Firefox
+  toggleBodyOverflow();
+});
+
+iframe.addEventListener("fullscreenchange", () => {
+  // Standard
+  toggleBodyOverflow();
+});
+
+iframe.addEventListener("MSFullscreenChange", () => {
+  // IE/Edge
+  toggleBodyOverflow();
+});
+
+function toggleBodyOverflow() {
+  if (
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement
+  ) {
+    document.body.style.overflow = "hidden"; // Entering fullscreen
+  } else {
+    document.body.style.overflow = ""; // Exiting fullscreen
+  }
+}
