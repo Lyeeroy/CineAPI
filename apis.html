@@ -5,24 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CineAPI</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Style for the tabs */
+      .tabs {
+        display: flex;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .tab {
+        padding: 10px 15px;
+        cursor: pointer;
+        border: none;
+        background-color: transparent;
+        border-bottom: 2px solid transparent; /* Initially no border */
+      }
+
+      .tab.active {
+        border-bottom: 2px solid black; /* Active tab has a border */
+        font-weight: bold;
+      }
+
+      .tab-content {
+        display: none; /* Initially hide all content */
+        padding: 20px;
+      }
+
+      .tab-content.active {
+        display: block; /* Show content of active tab */
+      }
+    </style>
   </head>
   <body class="bg-gray-50 text-gray-900 p-6">
     <div class="w-full mx-auto md:w-1/2 flex flex-col">
       <h1 class="text-3xl font-bold mb-6 text-center p-4">
         📋 URL List Manager
       </h1>
-      <div
-        id="url-list"
-        class="flex-1 p-4 space-y-3 overflow-y-auto border rounded-lg max-h-[40vh] min-h-[40vh]"
-      ></div>
-      <div class="p-4 border-t mt-4 flex-shrink-0">
+
+      <div class="tabs transition duration-500 ease-in-out">
+        <button
+          class="tab active transform transition duration-500 ease-in-out"
+          data-tab="url-management"
+        >
+          URL Management
+        </button>
+        <button
+          class="tab transform transition duration-500 ease-in-out"
+          data-tab="import-export"
+        >
+          Import / Export
+        </button>
+        <button
+          class="tab transform transition duration-500 ease-in-out"
+          data-tab="documentation"
+        >
+          Documentation
+        </button>
+      </div>
+
+      <div id="url-management" class="tab-content active">
+        <div
+          id="url-list"
+          class="p-4 space-y-3 overflow-y-auto border rounded-lg max-h-[40vh] min-h-[40vh]"
+        ></div>
         <button
           id="add-url"
-          class="bg-black text-white px-4 py-3 rounded-lg w-full"
+          class="bg-black text-white px-4 py-3 rounded-lg w-full mt-4"
         >
           + Add URL
         </button>
-        <div class="mt-4 flex space-x-2">
+      </div>
+
+      <div id="import-export" class="tab-content">
+        <div class="flex space-x-2">
           <button
             id="export-btn"
             class="bg-black text-white px-4 py-2 rounded-lg w-1/2"
@@ -36,29 +90,74 @@
             ↓ Import
           </button>
         </div>
-
         <select id="export-format" class="border p-3 rounded-lg w-full mt-3">
           <option value="export-code" selected>Export code</option>
           <option value="export-url">Export URL</option>
           <option value="export-url-redirect">Export URL with redirect</option>
         </select>
-        <!-- copy button -->
-        <div class="flex space-x-2">
+        <div class="flex space-x-2 mt-3">
           <textarea
             id="import-input"
             placeholder="Paste code to import or see exported code here"
-            class="border p-3 rounded-lg w-full mt-3 h-24 resize-none"
+            class="border p-3 rounded-lg w-full h-24 resize-none"
           ></textarea>
           <button
             id="copy-btn"
-            class="w-[10%] bg-black text-white px-4 py-2 rounded-lg mt-4 hover:bg-green-700"
+            class="w-[10%] bg-black text-white px-4 py-2 rounded-lg hover:bg-green-700"
           >
             Copy
           </button>
         </div>
+      </div>
+
+      <div id="documentation" class="tab-content">
+        <h2 class="text-xl font-bold mb-2">Quick Import:</h2>
+        <p>
+          Use the following URL format to import data automatically. If you want
+          to redirect to <code>/index.html</code> after importing, add
+          <code>&redirect=true</code> in the URL.
+        </p>
+        <pre class="bg-gray-100 p-3 rounded-lg text-sm mt-2">
+/apis.html?import={code}&redirect=true</pre
+        >
+
+        <h2 class="text-xl font-bold mt-4 mb-2">URL Syntax:</h2>
+        <pre class="bg-gray-100 p-3 rounded-lg text-sm">
+example.com/#type/#id/#season/#episode</pre
+        >
+        <p class="mb-2 mt-2">Manual Override:</p>
+        <pre class="bg-gray-100 p-3 rounded-lg text-sm">
+example.com/#type&tv=series&movie=film</pre
+        >
+
+        <p class="mt-2">
+          - <strong>#type</strong> is automatically filled as <em>movie</em> or
+          <em>tv show</em> based on the TMDB ID.<br />- <strong>#id</strong>,
+          <strong>#season</strong>, and <strong>#episode</strong> are
+          placeholders that will be replaced dynamically.
+        </p>
+
+        <h2 class="text-xl font-bold mt-4 mb-2">Example:</h2>
+        <pre class="bg-gray-100 p-3 rounded-lg text-sm">
+example.com/movie/12345/1/2</pre
+        >
+        <p class="mt-2">
+          In this example, the <strong>#type</strong> will be movie, the
+          <strong>#id</strong> 12345 will be replaced with the TMDB ID of the
+          movie. The <strong>#season</strong> and
+          <strong>#episode</strong> corresponds to a movie, with season 1 and
+          episode 2.
+        </p>
+        <h2 class="text-xl font-bold mt-4 mb-2">Naming a Source</h2>
+        <pre class="bg-gray-100 p-3 rounded-lg text-sm">
+Example:https://example.com</pre
+        >
+      </div>
+
+      <div class="p-4 border-t mt-4 flex-shrink-0">
         <button
           id="close-btn"
-          class="bg-black text-white px-4 py-2 rounded-lg w-full mt-4 hover:bg-red-700"
+          class="bg-black text-white px-4 py-2 rounded-lg w-full hover:bg-red-700"
           onclick="window.location.href = 'index.html'"
         >
           Close
@@ -69,66 +168,11 @@
         >
           🛠 Debug Panel
         </button>
-        <div class="mt-6">
-          <button
-            id="toggle-docs"
-            class="bg-black text-white px-4 py-2 rounded-lg w-full flex justify-between items-center"
-            onclick="document.getElementById('documentation').classList.toggle('hidden'); document.getElementById('arrow').textContent = document.getElementById('arrow').textContent === '▼' ? '▲' : '▼';"
-          >
-            📖 Documentation <span id="arrow">▼</span>
-          </button>
-          <div
-            id="documentation"
-            class="hidden p-4 bg-white border rounded-lg mt-2"
-          >
-            <h2 class="text-xl font-bold mb-2">Quick Import:</h2>
-            <p>
-              Use the following URL format to import data automatically. If you
-              want to redirect to <code>/index.html</code> after importing, add
-              <code>&redirect=true</code> in the URL.
-            </p>
-            <pre class="bg-gray-100 p-3 rounded-lg text-sm mt-2">
-  /apis.html?import={code}&redirect=true</pre
-            >
 
-            <h2 class="text-xl font-bold mt-4 mb-2">URL Syntax:</h2>
-            <pre class="bg-gray-100 p-3 rounded-lg text-sm">
-  example.com/#type/#id/#season/#episode</pre
-            >
-            <p class="mb-2 mt-2">Manual Override:</p>
-            <pre class="bg-gray-100 p-3 rounded-lg text-sm">
-  example.com/#type&tv=series&movie=film</pre
-            >
-
-            <p class="mt-2">
-              - <strong>#type</strong> is automatically filled as
-              <em>movie</em> or <em>tv show</em> based on the TMDB ID.<br />-
-              <strong>#id</strong>, <strong>#season</strong>, and
-              <strong>#episode</strong> are placeholders that will be replaced
-              dynamically.
-            </p>
-
-            <h2 class="text-xl font-bold mt-4 mb-2">Example:</h2>
-            <pre class="bg-gray-100 p-3 rounded-lg text-sm">
-  example.com/movie/12345/1/2</pre
-            >
-            <p class="mt-2">
-              In this example, the <strong>#type</strong> will be movie, the
-              <strong>#id</strong> 12345 will be replaced with the TMDB ID of
-              the movie. The <strong>#season</strong> and
-              <strong>#episode</strong> corresponds to a movie, with season 1
-              and episode 2.
-            </p>
-            <h2 class="text-xl font-bold mt-4 mb-2">Naming a Source</h2>
-            <pre class="bg-gray-100 p-3 rounded-lg text-sm">
-  Example:https://example.com</pre
-            >
-          </div>
-          <p class="text-sm text-center mt-4 opacity-50">
-            Note: The URLs are stored in Local Storage. This page does not hold
-            any data.
-          </p>
-        </div>
+        <p class="text-sm text-center mt-4 opacity-50">
+          Note: The URLs are stored in Local Storage. This page does not hold
+          any data.
+        </p>
       </div>
     </div>
 
@@ -147,5 +191,28 @@
     </div>
 
     <script src="src/apis.js"></script>
+    <script>
+      const tabs = document.querySelectorAll(".tab");
+      const tabContents = document.querySelectorAll(".tab-content");
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const targetTab = document.querySelector(`#${tab.dataset.tab}`);
+
+          // Hide all tab contents
+          tabContents.forEach((content) => content.classList.remove("active"));
+
+          // Show the selected tab content
+          targetTab.classList.add("active");
+
+          // Set active class on tabs
+          tabs.forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+        });
+      });
+
+      // Initially show the first tab
+      tabs[0].click();
+    </script>
   </body>
 </html>
