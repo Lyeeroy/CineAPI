@@ -46,7 +46,7 @@ function addUrl(value = "") {
   const input = document.createElement("input");
   input.type = "text";
   input.value = value;
-  input.className = "url-input border p-3 rounded-lg flex-1";
+  input.className = "url-input border p-3 rounded-lg flex-1 w-full";
 
   const removeBtn = document.createElement("button");
   removeBtn.textContent = "✕";
@@ -62,7 +62,17 @@ function addUrl(value = "") {
   container.appendChild(removeBtn);
   document.getElementById("url-list").appendChild(container);
 
-  input.addEventListener("input", saveData);
+  document.getElementById("save-btn").onclick = () => {
+    saveData();
+    const popup = document.createElement("div");
+    popup.className =
+      "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 text-white p-4 rounded-lg";
+    popup.textContent = "Data saved!";
+    document.body.appendChild(popup);
+    setTimeout(() => {
+      document.body.removeChild(popup);
+    }, 1000);
+  };
 }
 
 document.getElementById("add-url").onclick = () => addUrl();

@@ -36,7 +36,7 @@
     </style>
   </head>
   <body class="bg-gray-50 text-gray-900 p-6">
-    <div class="w-full mx-auto md:w-1/2 flex flex-col">
+    <div class="w-full mx-auto md:w-full lg:w-1/2 sm:w-full flex flex-col">
       <h1 class="text-3xl font-bold mb-6 text-center p-4">
         📋 URL List Manager
       </h1>
@@ -57,6 +57,7 @@
         <button
           class="tab transform transition duration-500 ease-in-out"
           data-tab="documentation"
+          id="docs-btn"
         >
           Documentation
         </button>
@@ -72,6 +73,13 @@
           class="bg-black text-white px-4 py-3 rounded-lg w-full mt-4"
         >
           + Add URL
+        </button>
+        <!--save button-->
+        <button
+          id="save-btn"
+          class="bg-green-600 text-white px-4 py-2 rounded-lg w-full mt-4"
+        >
+          Save
         </button>
       </div>
 
@@ -105,7 +113,31 @@
             id="copy-btn"
             class="w-[10%] bg-black text-white px-4 py-2 rounded-lg hover:bg-green-700"
           >
-            Copy
+            <svg
+              viewBox="0 0 24 24"
+              fill="white"
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-full h-full"
+            >
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g
+                id="SVGRepo_tracerCarrier"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></g>
+              <g id="SVGRepo_iconCarrier">
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M21 8C21 6.34315 19.6569 5 18 5H10C8.34315 5 7 6.34315 7 8V20C7 21.6569 8.34315 23 10 23H18C19.6569 23 21 21.6569 21 20V8ZM19 8C19 7.44772 18.5523 7 18 7H10C9.44772 7 9 7.44772 9 8V20C9 20.5523 9.44772 21 10 21H18C18.5523 21 19 20.5523 19 20V8Z"
+                  fill="currentColor"
+                ></path>
+                <path
+                  d="M6 3H16C16.5523 3 17 2.55228 17 2C17 1.44772 16.5523 1 16 1H6C4.34315 1 3 2.34315 3 4V18C3 18.5523 3.44772 19 4 19C4.55228 19 5 18.5523 5 18V4C5 3.44772 5.44772 3 6 3Z"
+                  fill="currentColor"
+                ></path>
+              </g>
+            </svg>
           </button>
         </div>
       </div>
@@ -213,6 +245,32 @@ Example:https://example.com</pre
 
       // Initially show the first tab
       tabs[0].click();
+
+      // When +Add URL clicked, scroll down on the input field
+      document.getElementById("add-url").addEventListener("click", () => {
+        const urlList = document.getElementById("url-list");
+        urlList.scrollTo({ top: urlList.scrollHeight, behavior: "smooth" });
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        console.log("URL Parameters:", urlParams.toString());
+
+        const url = urlParams.get("url");
+        console.log("Extracted URL Parameter:", url);
+
+        if (url === "docs") {
+          const docsBtn = document.getElementById("docs-btn");
+          console.log("docsBtn:", docsBtn);
+
+          if (docsBtn) {
+            docsBtn.click();
+            console.log("Button clicked!");
+          } else {
+            console.error("docs-btn not found in the DOM");
+          }
+        }
+      });
     </script>
   </body>
 </html>
