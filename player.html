@@ -9,8 +9,12 @@
     <title>CineAPI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+      html,
       body {
-        transition: background 0.3s, color 0.3s;
+        margin: 0;
+        padding: 0;
+        background-color: black;
+        overflow: hidden;
       }
       .episode-item:hover {
         background: #111;
@@ -51,13 +55,13 @@
       }
       .fullscreen-container {
         height: calc(
-          100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+          100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)
         );
         overflow: hidden;
       }
     </style>
   </head>
-  <body class="bg-white text-black">
+  <body>
     <div class="lg:flex flex-col md:flex-row fullscreen-container">
       <div id="video-container" class="flex-1 bg-black relative">
         <iframe
@@ -68,9 +72,11 @@
         ></iframe>
       </div>
       <div
-        class="md:flex md:flex-col w-full lg:w-1/3 bg-white p-4 shadow-xl border-t md:border-l border-gray-300 lg:w-96 overflow-y-auto"
+        class="md:flex md:flex-col w-full lg:w-1/3 bg-black p-4 shadow-xl border-t md:border-l border-gray-300 lg:w-96 overflow-y-auto"
       >
-        <label for="season-select" class="text-sm font-semibold">Source:</label>
+        <label for="season-select" class="text-sm font-semibold text-white"
+          >Source:</label
+        >
         <div class="flex items-center">
           <button
             id="prev-server"
@@ -98,7 +104,7 @@
         <label
           id="season-label"
           for="season-select"
-          class="text-sm font-semibold"
+          class="text-sm font-semibold text-white"
           >Season:</label
         >
         <select
@@ -109,7 +115,7 @@
           id="playlist"
           class="space-y-2 overflow-y-auto flex-1 sm:max-h-[50vh] lg:max-h-none"
         ></div>
-        <div class="flex justify-between text-white bg-white rounded-t-xl mt-2">
+        <div class="flex justify-between text-white bg-black rounded-t-xl mt-2">
           <button
             id="prev-episode"
             class="w-1/2 p-2 mr-1 bg-black text-white rounded"
@@ -210,5 +216,12 @@
     </div>
     <script src="src/edit.js"></script>
     <script src="src/player.js"></script>
+    <script>
+      document.addEventListener("fullscreenchange", () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.style.height = window.innerHeight + "px";
+        }
+      });
+    </script>
   </body>
 </html>
