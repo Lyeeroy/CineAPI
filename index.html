@@ -100,7 +100,91 @@
       }
     </style>
   </head>
+
   <body class="bg-black text-white p-4">
+    <div class="bg-black flex items-center justify-end z-1000">
+      <div class="relative">
+        <button
+          id="menuButton"
+          class="text-white p-3 rounded-full focus:outline-none"
+          style="background: rgba(255, 255, 255, 0.1)"
+        >
+          &#9776;
+        </button>
+
+        <div
+          id="menu"
+          class="hidden absolute right-0 mt-2 w-48 rounded-lg shadow-lg text-white"
+          style="background: rgba(255, 255, 255, 0.1)"
+        >
+          <!--<div class="p-3 border-b border-gray-300">-->
+          <div class="p-1">
+            <span class="text-blue-400"></span>
+          </div>
+          <ul>
+            <li
+              class="px-4 py-2 hover:text-white cursor-pointer text-gray-300"
+              onclick="window.location.href = 'apis.html'"
+            >
+              <span class="text-xl flex items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="1em"
+                  height="1em"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="feather feather-settings mr-2"
+                >
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+                  ></path>
+                </svg>
+                Settings
+              </span>
+            </li>
+            <li
+              class="px-4 py-2 hover:text-white cursor-pointer text-gray-300"
+              onclick="window.location.href = '#'"
+            >
+              <span class="text-xl flex items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="1em"
+                  width="1em"
+                  viewBox="0 0 512 512"
+                  class="feather feather-settings mr-2"
+                >
+                  <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+                  <path
+                    opacity="1"
+                    fill="currentColor"
+                    d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm169.8-90.7c7.9-22.3 29.1-37.3 52.8-37.3h58.3c34.9 0 63.1 28.3 63.1 63.1c0 22.6-12.1 43.5-31.7 54.8L280 264.4c-.2 13-10.9 23.6-24 23.6c-13.3 0-24-10.7-24-24V250.5c0-8.6 4.6-16.5 12.1-20.8l44.3-25.4c4.7-2.7 7.6-7.7 7.6-13.1c0-8.4-6.8-15.1-15.1-15.1H222.6c-3.4 0-6.4 2.1-7.5 5.3l-.4 1.2c-4.4 12.5-18.2 19-30.6 14.6s-19-18.2-14.6-30.6l.4-1.2zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"
+                  ></path>
+                </svg>
+                Docs (soon)
+              </span>
+            </li>
+          </ul>
+          <!--<div class="p-3 border-b border-gray-300">-->
+          <div class="p-1">
+            <span class="text-yellow-400 text-sm"></span>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        document
+          .getElementById("menuButton")
+          .addEventListener("click", function () {
+            document.getElementById("menu").classList.toggle("hidden");
+          });
+      </script>
+    </div>
     <div class="text-center my-6">
       <h1 class="text-3xl font-bold">What would you like to watch today?</h1>
       <div class="search-bar-container mt-4">
