@@ -10,6 +10,10 @@
       body {
         transition: background 0.3s, color 0.3s;
       }
+      body {
+        padding: env(safe-area-inset-top) env(safe-area-inset-right)
+          env(safe-area-inset-bottom) env(safe-area-inset-left);
+      }
       .episode-item:hover {
         background: #111;
         color: #fff;
@@ -131,8 +135,6 @@
         </div>
       </div>
     </div>
-
-    <div id="spacer" class="pt-40"></div>
 
     <div
       id="url-list-frame"
