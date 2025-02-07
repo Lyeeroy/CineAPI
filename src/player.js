@@ -246,3 +246,11 @@ elements["next-episode"].parentNode.insertAdjacentElement(
   "afterend",
   closeButton
 );
+
+document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+        document.body.style.height = '100dvh';
+        document.body.style.overflow = 'hidden';
+        void document.body.offsetHeight; // Force reflow
+    }
+});
