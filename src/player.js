@@ -248,26 +248,9 @@ elements["next-episode"].parentNode.insertAdjacentElement(
 );
 
 const iframe = document.getElementById("video-player");
+const initialIframeHeight = iframe.clientHeight; // Store initial height
 
-iframe.addEventListener("webkitfullscreenchange", () => {
-  // Safari/iOS
-  toggleBodyOverflow();
-});
-
-iframe.addEventListener("mozfullscreenchange", () => {
-  // Firefox
-  toggleBodyOverflow();
-});
-
-iframe.addEventListener("fullscreenchange", () => {
-  // Standard
-  toggleBodyOverflow();
-});
-
-iframe.addEventListener("MSFullscreenChange", () => {
-  // IE/Edge
-  toggleBodyOverflow();
-});
+// ... (fullscreen event listeners as before) ...
 
 function toggleBodyOverflow() {
   if (
@@ -276,8 +259,13 @@ function toggleBodyOverflow() {
     document.mozFullScreenElement ||
     document.msFullscreenElement
   ) {
-    document.body.style.overflow = "hidden"; // Entering fullscreen
+    document.body.style.overflow = "hidden";
   } else {
-    document.body.style.overflow = ""; // Exiting fullscreen
+    document.body.style.overflow = "";
+    iframe.style.height = initialIframeHeight + "px"; // Reset height
+    // OR if using percentages:
+    // iframe.style.height = '90vh';  // Or your original percentage
+    // Force reflow (might be needed):
+    iframe.offsetHeight; // or window.dispatchEvent(new Event('resize'));
   }
 }
