@@ -247,25 +247,12 @@ elements["next-episode"].parentNode.insertAdjacentElement(
   closeButton
 );
 
-const iframe = document.getElementById("video-player");
-const initialIframeHeight = iframe.clientHeight; // Store initial height
-
-// ... (fullscreen event listeners as before) ...
-
-function toggleBodyOverflow() {
-  if (
-    document.fullscreenElement ||
-    document.webkitFullscreenElement ||
-    document.mozFullScreenElement ||
-    document.msFullscreenElement
-  ) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "";
-    iframe.style.height = initialIframeHeight + "px"; // Reset height
-    // OR if using percentages:
-    // iframe.style.height = '90vh';  // Or your original percentage
-    // Force reflow (might be needed):
-    iframe.offsetHeight; // or window.dispatchEvent(new Event('resize'));
+document.addEventListener("fullscreenchange", () => {
+  if (!document.fullscreenElement) {
+    // Force Safari to repaint the layout
+    document.documentElement.style.display = "none";
+    setTimeout(() => {
+      document.documentElement.style.display = "block";
+    }, 50);
   }
-}
+});
