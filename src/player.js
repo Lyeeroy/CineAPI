@@ -246,3 +246,10 @@ elements["next-episode"].parentNode.insertAdjacentElement(
   "afterend",
   closeButton
 );
+
+document.addEventListener("fullscreenchange", () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.style.height = "100dvh";
+    document.body.style.height = "100dvh";
+  }
+});
