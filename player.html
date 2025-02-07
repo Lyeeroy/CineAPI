@@ -5,49 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CineAPI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
     <style>
+      html,
+      body {
+        height: 100%;
+      }
       body {
         transition: background 0.3s, color 0.3s;
-      }
-      .episode-item:hover {
-        background: #111;
-        color: #fff;
-      }
-      .highlight {
-        background: black !important;
-        color: white !important;
-      }
-      .disabled {
-        background: gray !important;
-        cursor: not-allowed !important;
       }
       .responsive-container {
         width: 100%; /* Default width */
         height: 90vh; /* Default height for horizontal orientation */
       }
-
       /*mobile devices in portrait orientation */
       @media (max-width: 640px) and (orientation: portrait) {
         .responsive-container {
           height: calc(80vw); /* 16:9 aspect ratio (100vw * 9 / 16) */
         }
       }
-
       /*mobile devices in landscape orientation */
       @media (max-width: 640px) and (orientation: landscape) {
         .responsive-container {
           height: 90vh; /* Maintain 90vh */
         }
       }
-
       /*tablets in portrait orientation */
       @media (min-width: 641px) and (max-width: 1024px) and (orientation: portrait) {
         .responsive-container {
           height: calc(100vw * 9 / 16); /* 16:9 aspect ratio */
         }
       }
-
       /*larger screens */
       @media (min-width: 1025px) {
         .responsive-container {
@@ -57,9 +44,8 @@
       }
     </style>
   </head>
-
   <body class="bg-white text-black">
-    <div class="lg:flex flex-col md:flex-row h-[100dvh] max-h-screen min-h-0">
+    <div class="lg:flex flex-col md:flex-row h-[100vh] max-h-screen min-h-0">
       <div id="video-container" class="flex-1 bg-black relative">
         <iframe
           id="video-player"
@@ -69,12 +55,6 @@
         ></iframe>
       </div>
     </div>
-
-    <script>
-      const link = document.getElementById("full-scale-link");
-      const path = window.location.pathname.split("/").slice(0, -1).join("/");
-      link.href = `${path}/apis.html`;
-    </script>
   </body>
   <script src="src/edit.js"></script>
   <script src="src/player.js"></script>
