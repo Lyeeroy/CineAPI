@@ -36,7 +36,7 @@
     </style>
   </head>
   <body class="bg-gray-50 text-gray-900 p-6">
-    <div class="w-full mx-auto md:w-full lg:w-1/2 sm:w-full flex flex-col">
+    <div class="w-full mx-auto md:w-1/2 flex flex-col">
       <h1 class="text-3xl font-bold mb-6 text-center p-4">
         📋 URL List Manager
       </h1>
@@ -57,7 +57,6 @@
         <button
           class="tab transform transition duration-500 ease-in-out"
           data-tab="documentation"
-          id="docs-btn"
         >
           Documentation
         </button>
@@ -250,26 +249,6 @@ Example:https://example.com</pre
       document.getElementById("add-url").addEventListener("click", () => {
         const urlList = document.getElementById("url-list");
         urlList.scrollTo({ top: urlList.scrollHeight, behavior: "smooth" });
-      });
-
-      document.addEventListener("DOMContentLoaded", () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        console.log("URL Parameters:", urlParams.toString());
-
-        const url = urlParams.get("url");
-        console.log("Extracted URL Parameter:", url);
-
-        if (url === "docs") {
-          const docsBtn = document.getElementById("docs-btn");
-          console.log("docsBtn:", docsBtn);
-
-          if (docsBtn) {
-            docsBtn.click();
-            console.log("Button clicked!");
-          } else {
-            console.error("docs-btn not found in the DOM");
-          }
-        }
       });
     </script>
   </body>
