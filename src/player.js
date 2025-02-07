@@ -246,13 +246,3 @@ elements["next-episode"].parentNode.insertAdjacentElement(
   "afterend",
   closeButton
 );
-
-document.addEventListener("fullscreenchange", () => {
-  if (!document.fullscreenElement) {
-    // Force Safari to repaint the layout
-    document.documentElement.style.display = "none";
-    setTimeout(() => {
-      document.documentElement.style.display = "block";
-    }, 50);
-  }
-});
