@@ -1,210 +1,256 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CineAPI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+const apiKey = "2c6781f841ce2ad1608de96743a62eb9";
+const params = new URLSearchParams(window.location.search);
+const tmdbId = params.get("tmdbId") || "2317";
+let currentEpisode = +params.get("episode") || 1;
+let currentSeason = +params.get("season") || 1;
 
-    <style>
-      body {
-        transition: background 0.3s, color 0.3s;
-        overflow: hidden; /* Prevent scrolling */
-        height: 100vh; /* Full height */
+const elements = Object.fromEntries(
+  [
+    "server-select",
+    "season-select",
+    "playlist",
+    "video-player",
+    "prev-episode",
+    "next-episode",
+    "edit-button",
+    "prev-server",
+    "next-server",
+    "season-label",
+  ].map((id) => [id, document.getElementById(id)])
+);
+
+const episodesPerSeason = {};
+
+const loadAPIs = () => {
+  const data = localStorage.getItem("urlList");
+  return data ? JSON.parse(data) : [];
+};
+
+const parseTypeMapping = (url) => {
+  const match = url.match(/#type(&[\w]+=\w+)*/);
+  const mapping = { tv: "tv", movie: "movie" };
+  if (match) {
+    const params = match[0].split("&").slice(1);
+    params.forEach((p) => {
+      const [key, value] = p.split("=");
+      if (key && value) mapping[key] = value;
+    });
+  }
+  return mapping;
+};
+
+const replacePlaceholders = (url, { tvMovie, tmdbId, season, episode }) => {
+  const mapping = parseTypeMapping(url);
+  const mediaType =
+    mapping[tvMovie] || mapping["tv"] || mapping["movie"] || "tv";
+
+  let newUrl = url
+    .replace(/#type(&[\w]+=\w+)*/g, mediaType)
+    .replace(/#id/g, tmdbId);
+
+  if (mediaType === mapping["tv"]) {
+    newUrl = newUrl.replace(/#season/g, season).replace(/#episode/g, episode);
+  } else {
+    newUrl = newUrl.replace(/([&?])(s=|e=)([^&]*)/g, "");
+    newUrl = newUrl.replace(/#season|#episode/g, "");
+  }
+
+  newUrl = newUrl.replace(/([&?])(&|$)/g, "$1").replace(/\/$/, "");
+
+  return newUrl;
+};
+
+const fetchData = (url) => fetch(url).then((res) => res.json());
+
+async function fetchSeasons() {
+  if (mediaType === "tv") {
+    const { seasons } = await fetchData(
+      `https://api.themoviedb.org/3/tv/${tmdbId}?api_key=${apiKey}`
+    );
+    elements["season-select"].innerHTML = seasons
+      .map(
+        ({ season_number, name }) =>
+          `<option value="${season_number}">${name}</option>`
+      )
+      .join("");
+    elements["season-select"].value = currentSeason;
+    loadEpisodes(currentSeason);
+    toggleElements(["season-select", "season-label"], "inline");
+  } else {
+    toggleElements(["season-select", "season-label"], "none");
+  }
+}
+
+async function loadEpisodes(seasonNumber) {
+  if (mediaType === "tv") {
+    const { episodes } = await fetchData(
+      `https://api.themoviedb.org/3/tv/${tmdbId}/season/${seasonNumber}?api_key=${apiKey}`
+    );
+    episodesPerSeason[seasonNumber] = episodes.length;
+    elements["playlist"].innerHTML = episodes
+      .map(
+        ({ episode_number, name }) =>
+          `<div class="episode-item p-2 bg-gray-100 rounded cursor-pointer" data-episode="${episode_number}" data-season="${seasonNumber}"><strong>Ep ${episode_number}:</strong> ${name}</div>`
+      )
+      .join("");
+    updateUI();
+  }
+}
+
+async function getMediaType() {
+  for (const type of ["tv", "movie"]) {
+    try {
+      const res = await fetch(
+        `https://api.themoviedb.org/3/${type}/${tmdbId}?api_key=${apiKey}`
+      );
+      if (res.ok) return type;
+    } catch (error) {
+      console.error(`${type.toUpperCase()} fetch error:`, error);
+    }
+  }
+  return "tv";
+}
+
+let mediaType = "tv";
+getMediaType().then((type) => {
+  if (type) mediaType = type;
+  fetchSeasons();
+  updateVideoPlayer();
+});
+
+function updateVideoPlayer() {
+  elements["video-player"].src = replacePlaceholders(
+    elements["server-select"].value,
+    {
+      tvMovie: mediaType,
+      tmdbId,
+      season: mediaType === "tv" ? currentSeason : undefined,
+      episode: mediaType === "tv" ? currentEpisode : undefined,
+    }
+  );
+  const queryParams = new URLSearchParams({ tmdbId });
+  if (mediaType === "tv") {
+    queryParams.set("season", currentSeason);
+    queryParams.set("episode", currentEpisode);
+  }
+  history.pushState(null, "", `?${queryParams}`);
+  updateUI();
+}
+
+function updateUI() {
+  if (mediaType === "tv") {
+    document
+      .querySelectorAll(".episode-item")
+      .forEach((el) =>
+        el.classList.toggle(
+          "highlight",
+          el.dataset.episode == currentEpisode &&
+            el.dataset.season == currentSeason
+        )
+      );
+    toggleNavigation(currentEpisode);
+  } else {
+    toggleElements(["prev-episode", "next-episode"], "none");
+  }
+}
+
+function toggleElements(ids, display) {
+  ids.forEach((id) => (elements[id].style.display = display));
+}
+
+function toggleNavigation(episode) {
+  elements["prev-episode"].classList.toggle("disabled", episode <= 1);
+  elements["next-episode"].classList.toggle(
+    "disabled",
+    episode >= (episodesPerSeason[currentSeason] || 0)
+  );
+  toggleElements(["prev-episode", "next-episode"], "inline");
+}
+
+["server-select", "season-select"].forEach((id) => {
+  elements[id].addEventListener("change", (e) =>
+    id === "server-select" ? updateVideoPlayer() : loadEpisodes(e.target.value)
+  );
+});
+
+elements["playlist"].addEventListener("click", (e) => {
+  const item = e.target.closest(".episode-item");
+  if (item) {
+    currentEpisode = +item.dataset.episode;
+    currentSeason = +item.dataset.season;
+    updateVideoPlayer();
+  }
+});
+
+[
+  ["prev-episode", -1],
+  ["next-episode", 1],
+].forEach(([id, delta]) => {
+  elements[id].addEventListener("click", () => {
+    const newEp = currentEpisode + delta;
+    if (newEp >= 1 && newEp <= (episodesPerSeason[currentSeason] || 0)) {
+      currentEpisode = newEp;
+      updateVideoPlayer();
+    }
+  });
+});
+
+[
+  ["prev-server", -1],
+  ["next-server", 1],
+].forEach(([id, delta]) => {
+  elements[id].addEventListener("click", () => {
+    const select = elements["server-select"];
+    const newIndex = select.selectedIndex + delta;
+    if (newIndex >= 0 && newIndex < select.options.length) {
+      select.selectedIndex = newIndex;
+      updateVideoPlayer();
+    }
+  });
+});
+
+function populateServerOptions() {
+  elements["server-select"].innerHTML = loadAPIs()
+    .map((entry) => {
+      let name, url;
+
+      if (entry.includes(":http")) {
+        [name, url] = entry.split(":http");
+        url = "http" + url;
+      } else {
+        url = entry;
+        const domainMatch = url.match(/https?:\/\/(.*?)(?:\/|$)/);
+        name = domainMatch ? domainMatch[1] : url;
       }
-      .episode-item:hover {
-        background: #111;
-        color: #fff;
-      }
-      .highlight {
-        background: black !important;
-        color: white !important;
-      }
-      .disabled {
-        background: gray !important;
-        cursor: not-allowed !important;
-      }
-      .responsive-container {
-        width: 100%;
-        height: 100%; /* Full height */
-      }
-    </style>
-  </head>
 
-  <body class="bg-white text-black">
-    <div class="lg:flex flex-col md:flex-row h-full max-h-screen min-h-0">
-      <div id="video-container" class="flex-1 bg-black relative">
-        <iframe
-          id="video-player"
-          class="responsive-container"
-          frameborder="0"
-          allowfullscreen
-        ></iframe>
-      </div>
+      return `<option value="${url}">${name}</option>`;
+    })
+    .join("");
+}
 
-      <div
-        class="md:flex md:flex-col w-full lg:w-1/3 bg-white p-4 shadow-xl border-t md:border-l border-gray-300 lg:w-96 overflow-y-auto"
-      >
-        <label for="season-select" class="text-sm font-semibold">Source:</label>
+populateServerOptions();
 
-        <div class="flex items-center">
-          <button
-            id="prev-server"
-            class="px-4 py-2 bg-gray-200 text-black rounded-l-lg active:bg-gray-300 transition"
-          >
-            &#8249;
-          </button>
-          <select
-            id="server-select"
-            class="px-4 py-2 w-full bg-gray-200 text-black outline-none appearance-none"
-          ></select>
-          <button
-            id="next-server"
-            class="px-4 py-2 bg-gray-200 text-black rounded-r-lg active:bg-gray-300 transition"
-          >
-            &#8250;
-          </button>
-          <button
-            id="editButton"
-            class="ml-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition"
-          >
-            Edit
-          </button>
-        </div>
+const closeButton = document.createElement("button");
+closeButton.textContent = "Close";
+closeButton.className =
+  "p-2 bg-black text-white rounded mt-2 w-full hover:bg-red-700";
+closeButton.style.transition = "background-color 0.3s";
+closeButton.addEventListener("mouseout", () => {
+  closeButton.style.backgroundColor = "";
+});
+closeButton.addEventListener("click", () => {
+  window.location.href = "index.html";
+});
 
-        <label
-          id="season-label"
-          for="season-select"
-          class="text-sm font-semibold"
-          >Season:</label
-        >
-        <select
-          id="season-select"
-          class="w-full px-4 py-2 rounded bg-gray-200 text-black mb-4"
-        ></select>
+elements["next-episode"].parentNode.insertAdjacentElement(
+  "afterend",
+  closeButton
+);
 
-        <div
-          id="playlist"
-          class="space-y-2 overflow-y-auto flex-1 sm:max-h-[50vh] lg:max-h-none"
-        ></div>
-
-        <div class="flex justify-between text-white bg-white rounded-t-xl mt-2">
-          <button
-            id="prev-episode"
-            class="w-1/2 p-2 mr-1 bg-black text-white rounded"
-          >
-            Previous
-          </button>
-          <button
-            id="next-episode"
-            class="w-1/2 p-2 ml-1 bg-black text-white rounded"
-          >
-            Next
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div
-      id="url-list-frame"
-      class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 p-4"
-    >
-      <div
-        class="bg-white rounded-2xl shadow-2xl w-full max-w-full lg:max-w-[80vh] h-full md:max-h-[90vh] flex flex-col relative"
-      >
-        <div class="p-4 flex items-center justify-between border-b">
-          <h1 class="text-xl md:text-2xl font-bold">📋 URL List Manager</h1>
-          <div class="flex items-center space-x-3">
-            <button id="api_full" class="text-black text-2xl">▢</button>
-            <button id="close-frame" class="text-black text-2xl">✕</button>
-          </div>
-          <script>
-            const link2 = document.getElementById("api_full");
-            const path2 = window.location.pathname
-              .split("/")
-              .slice(0, -1)
-              .join("/");
-            link2.addEventListener("click", () => {
-              window.location.href = `${path2}/apis.html`;
-            });
-          </script>
-        </div>
-
-        <div id="url-list" class="flex-1 p-4 space-y-3 overflow-y-auto"></div>
-
-        <div class="p-4 border-t">
-          <button
-            id="add-url"
-            class="bg-black text-white px-4 py-3 rounded-lg w-full"
-          >
-            + Add URL
-          </button>
-          <div class="mt-4 flex space-x-2">
-            <button
-              id="export-btn"
-              class="bg-black text-white px-4 py-2 rounded-lg w-1/2"
-            >
-              ↑ Export
-            </button>
-            <button
-              id="import-btn"
-              class="bg-black text-white px-4 py-2 rounded-lg w-1/2"
-            >
-              ↓ Import
-            </button>
-          </div>
-          <textarea
-            id="import-input"
-            placeholder="Paste code to import or see exported code here"
-            class="border p-3 rounded-lg w-full mt-3 h-24 resize-none"
-          ></textarea>
-
-          <button
-            id="debug-btn"
-            class="bg-black text-white px-4 py-2 rounded-lg w-full mt-4"
-          >
-            🛠 Debug Panel
-          </button>
-
-          <a
-            id="full-scale-link"
-            class="text-sm text-gray-500 flex justify-center mt-4 hover:text-black"
-          >
-            Full scale version
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      const link = document.getElementById("full-scale-link");
-      const path = window.location.pathname.split("/").slice(0, -1).join("/");
-      link.href = `${path}/apis.html`;
-
-      // Event listener to adjust layout on fullscreen change
-      const videoPlayer = document.getElementById("video-player");
-      document.addEventListener("fullscreenchange", () => {
-        if (!document.fullscreenElement) {
-          document.body.style.height = "100vh";
-        }
-      });
-    </script>
-
-    <div
-      id="debug-panel"
-      class="hidden fixed top-10 left-1/2 transform -translate-x-1/2 bg-white border rounded-2xl shadow-2xl p-6 w-96 z-20 max-h-[90vh] overflow-y-auto z-50"
-    >
-      <h2 class="text-2xl font-bold mb-4 text-center">Debug Panel 📝</h2>
-      <div id="debug-info" class="text-sm space-y-4"></div>
-      <button
-        id="close-debug"
-        class="bg-black text-white px-4 py-2 rounded-lg w-full mt-4"
-      >
-        Close
-      </button>
-    </div>
-  </body>
-  <script src="src/edit.js"></script>
-  <script src="src/player.js"></script>
-</html>
-
+document.addEventListener("fullscreenchange", () => {
+  if (!document.fullscreenElement) {
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 10);
+  }
+});
