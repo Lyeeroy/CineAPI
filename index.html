@@ -25,6 +25,7 @@
         overflow: hidden;
         max-width: 100%;
       }
+
       .carousel-track {
         display: flex;
         transition: transform 0.5s ease;
@@ -41,17 +42,21 @@
           transparent
         );
       }
+
       .carousel-track::-webkit-scrollbar {
         display: none;
       }
+
       .carousel-item {
         position: relative;
         min-width: 150px;
         transition: transform 0.3s ease;
       }
+
       .carousel-item:hover {
         transform: scale(1.05);
       }
+
       .rating {
         position: absolute;
         bottom: 5px;
@@ -65,6 +70,7 @@
         align-items: center;
         gap: 4px;
       }
+
       .nav-btn {
         background: #333;
         color: white;
@@ -83,11 +89,13 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         transition: all 0.3s ease;
       }
+
       .nav-btn:hover {
         transform: translateY(-50%) scale(1.1);
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         background: #404040;
       }
+
       .search-bar-container {
         background: rgba(255, 255, 255, 0.05);
         padding: 5px;
@@ -95,6 +103,7 @@
         max-width: 600px;
         margin: auto;
       }
+
       .search-bar {
         background: rgba(255, 255, 255, 0.08);
         color: white;
@@ -148,7 +157,6 @@
                 Settings
               </span>
             </li>
-            <!-- Add dark mode toggle -->
             <li
               class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-[#333] cursor-pointer text-gray-700 dark:text-gray-300 rounded transition-colors"
               onclick="toggleDarkMode()"
@@ -214,33 +222,56 @@
 
     <div id="categories-container"></div>
 
-    <!-- Rest of the script remains the same -->
     <script>
       const API_KEY = "2c6781f841ce2ad1608de96743a62eb9";
       const BASE_URL = "https://api.themoviedb.org/3";
       const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
       const categories = [
-        { title: "Trending Movies", endpoint: "/trending/movie/week" },
-        { title: "Trending TV Shows", endpoint: "/trending/tv/week" },
-        { title: "In Cinema", endpoint: "/movie/upcoming" },
-        { title: "Popular Movies", endpoint: "/movie/popular" },
-        { title: "Popular TV Shows", endpoint: "/tv/popular" },
-        { title: "Top Rated Movies", endpoint: "/movie/top_rated" },
-        { title: "Top Rated TV Shows", endpoint: "/tv/top_rated" },
-        { title: "Now Playing", endpoint: "/movie/now_playing" },
-        { title: "On TV", endpoint: "/tv/on_the_air" },
+        {
+          title: "Trending Movies",
+          endpoint: "/trending/movie/week",
+          mediaType: "movie",
+        },
+        {
+          title: "Trending TV Shows",
+          endpoint: "/trending/tv/week",
+          mediaType: "tv",
+        },
+        { title: "In Cinema", endpoint: "/movie/upcoming", mediaType: "movie" },
+        {
+          title: "Popular Movies",
+          endpoint: "/movie/popular",
+          mediaType: "movie",
+        },
+        { title: "Popular TV Shows", endpoint: "/tv/popular", mediaType: "tv" },
+        {
+          title: "Top Rated Movies",
+          endpoint: "/movie/top_rated",
+          mediaType: "movie",
+        },
+        {
+          title: "Top Rated TV Shows",
+          endpoint: "/tv/top_rated",
+          mediaType: "tv",
+        },
+        {
+          title: "Now Playing",
+          endpoint: "/movie/now_playing",
+          mediaType: "movie",
+        },
+        { title: "On TV", endpoint: "/tv/on_the_air", mediaType: "tv" },
       ];
 
       function createCategorySection(category) {
         return `
-          <h2 class="text-xl font-bold my-4 dark:text-gray-200">${category.title}</h2>
-          <div class="carousel-container">
-            <button class="nav-btn left-4" onclick="scrollCarousel('${category.title}', -1)">&#8249;</button>
-            <div id="${category.title}" class="carousel-track"></div>
-            <button class="nav-btn right-4" onclick="scrollCarousel('${category.title}', 1)">&#8250;</button>
-          </div>
-        `;
+        <h2 class="text-xl font-bold my-4 dark:text-gray-200">${category.title}</h2>
+        <div class="carousel-container">
+          <button class="nav-btn left-4" onclick="scrollCarousel('${category.title}', -1)">&#8249;</button>
+          <div id="${category.title}" class="carousel-track"></div>
+          <button class="nav-btn right-4" onclick="scrollCarousel('${category.title}', 1)">&#8250;</button>
+        </div>
+      `;
       }
 
       function fetchAndDisplayCategories() {
@@ -249,25 +280,27 @@
           container.innerHTML += createCategorySection(category);
           fetch(`${BASE_URL}${category.endpoint}?api_key=${API_KEY}`)
             .then((response) => response.json())
-            .then((data) => displayMovies(data.results, category.title));
+            .then((data) =>
+              displayMovies(data.results, category.title, category.mediaType)
+            );
         });
       }
 
-      function displayMovies(movies, containerId) {
+      function displayMovies(movies, containerId, mediaType) {
         const container = document.getElementById(containerId);
         container.innerHTML = movies
           .filter((movie) => movie.poster_path)
           .map(
             (movie) => `
-              <div class="carousel-item">
-                <img src="${IMG_BASE_URL + movie.poster_path}" alt="${
+            <div class="carousel-item">
+              <img src="${IMG_BASE_URL + movie.poster_path}" alt="${
               movie.title || movie.name
             }" class="w-36 h-52 object-cover rounded-lg shadow-md cursor-pointer hover:shadow-lg dark:hover:shadow-gray-600/50 transition-shadow" onclick="window.location.href='player.html?tmdbId=${
               movie.id
-            }'">
-                <div class="rating">⭐ ${movie.vote_average.toFixed(1)}</div>
-              </div>
-            `
+            }&mediaType=${mediaType}'">
+              <div class="rating">⭐ ${movie.vote_average.toFixed(1)}</div>
+            </div>
+          `
           )
           .join("");
       }
@@ -294,20 +327,26 @@
             .then((response) => response.json())
             .then((data) => {
               searchResults.innerHTML = data.results
-                .filter((item) => item.poster_path)
+                .filter(
+                  (item) =>
+                    item.poster_path &&
+                    (item.media_type === "movie" || item.media_type === "tv")
+                )
                 .map(
                   (item) => `
-                    <div class="carousel-item">
-                      <img src="${IMG_BASE_URL + item.poster_path}" alt="${
+                  <div class="carousel-item">
+                    <img src="${IMG_BASE_URL + item.poster_path}" alt="${
                     item.title || item.name
                   }" class="w-36 h-52 object-cover rounded-lg shadow-md cursor-pointer hover:shadow-lg dark:hover:shadow-gray-600/50 transition-shadow" onclick="window.location.href='player.html?tmdbId=${
                     item.id
-                  }'">
-                      <div class="rating">⭐ ${
-                        item.vote_average ? item.vote_average.toFixed(1) : "N/A"
-                      }</div>
-                    </div>
-                  `
+                  }&mediaType=${item.media_type}&name=${encodeURIComponent(
+                    item.title || item.name
+                  )}'">
+                    <div class="rating">⭐ ${
+                      item.vote_average ? item.vote_average.toFixed(1) : "N/A"
+                    }</div>
+                  </div>
+                `
                 )
                 .join("");
             });

@@ -1,8 +1,10 @@
 const apiKey = "2c6781f841ce2ad1608de96743a62eb9";
 const params = new URLSearchParams(window.location.search);
 const tmdbId = params.get("tmdbId") || "2317";
+const mediaTypeParam = params.get("mediaType") || null;
 let currentEpisode = +params.get("episode") || 1;
 let currentSeason = +params.get("season") || 1;
+let mediaType = mediaTypeParam || "tv";
 
 const elements = Object.fromEntries(
   [
@@ -16,6 +18,8 @@ const elements = Object.fromEntries(
     "prev-server",
     "next-server",
     "season-label",
+    "movie-title",
+    "episode-info",
   ].map((id) => [id, document.getElementById(id)])
 );
 
@@ -98,6 +102,7 @@ async function loadEpisodes(seasonNumber) {
 }
 
 async function getMediaType() {
+  if (mediaTypeParam) return mediaTypeParam;
   for (const type of ["tv", "movie"]) {
     try {
       const res = await fetch(
@@ -111,7 +116,6 @@ async function getMediaType() {
   return "tv";
 }
 
-let mediaType = "tv";
 getMediaType().then((type) => {
   if (type) mediaType = type;
   fetchSeasons();
@@ -128,7 +132,7 @@ function updateVideoPlayer() {
       episode: mediaType === "tv" ? currentEpisode : undefined,
     }
   );
-  const queryParams = new URLSearchParams({ tmdbId });
+  const queryParams = new URLSearchParams({ tmdbId, mediaType });
   if (mediaType === "tv") {
     queryParams.set("season", currentSeason);
     queryParams.set("episode", currentEpisode);
@@ -230,11 +234,16 @@ function populateServerOptions() {
 
 async function fetchTVInfo() {
   const res = await fetch(
-    `https://api.themoviedb.org/3/tv/${tmdbId}?api_key=${apiKey}`
+    `https://api.themoviedb.org/3/${mediaType}/${tmdbId}?api_key=${apiKey}`
   );
-  const data = await res.json();
-  document.getElementById("movie-title").textContent = data.name;
-  document.getElementById("episode-info").textContent = data.overview;
+  if (res.ok) {
+    const data = await res.json();
+    elements["movie-title"].textContent = data.name || data.title;
+    elements["episode-info"].textContent =
+      data.overview || "No overview available.";
+  } else {
+    console.error("Failed to fetch TV info");
+  }
 }
 
 populateServerOptions();
