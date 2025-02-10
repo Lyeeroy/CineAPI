@@ -3,21 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="dark light" />
     <title>CineAPI</title>
     <link rel="icon" href="ico/capi.ico" type="image/x-icon" />
     <script src="https://cdn.tailwindcss.com"></script>
+
     <script>
-      tailwind.config = {
-        darkMode: "class",
-      };
+      // Set default dark mode preference if not set
+      if (localStorage.getItem("darkMode") === null) {
+        localStorage.setItem("darkMode", "true");
+      }
+
+      // Function to apply dark mode
+      function applyDarkMode() {
+        document.documentElement.classList.add("dark");
+      }
+
+      // Function to remove dark mode
+      function removeDarkMode() {
+        document.documentElement.classList.remove("dark");
+      }
+
+      // Apply dark mode on page load if preference is true
+      if (localStorage.getItem("darkMode") === "true") {
+        applyDarkMode();
+      }
     </script>
 
     <style>
-      :root {
-        color-scheme: dark light;
-      }
-
       .carousel-container {
         position: relative;
         display: flex;
@@ -190,8 +202,14 @@
           });
 
         function toggleDarkMode() {
-          const isDark = document.documentElement.classList.toggle("dark");
-          localStorage.setItem("darkMode", isDark);
+          const isDark = document.documentElement.classList.contains("dark");
+          if (isDark) {
+            localStorage.setItem("darkMode", "false");
+            removeDarkMode();
+          } else {
+            localStorage.setItem("darkMode", "true");
+            applyDarkMode();
+          }
         }
       </script>
     </div>
@@ -214,9 +232,19 @@
     <div id="search-results-container" class="hidden">
       <h2 class="text-xl font-bold my-4 dark:text-gray-200">Search Results</h2>
       <div class="carousel-container">
-        <button class="nav-btn left-4">&#8249;</button>
+        <button
+          class="nav-btn left-4"
+          onclick="scrollCarousel('search-results', -1)"
+        >
+          &#8249;
+        </button>
         <div id="search-results" class="carousel-track"></div>
-        <button class="nav-btn right-4">&#8250;</button>
+        <button
+          class="nav-btn right-4"
+          onclick="scrollCarousel('search-results', 1)"
+        >
+          &#8250;
+        </button>
       </div>
     </div>
 
@@ -265,11 +293,22 @@
 
       function createCategorySection(category) {
         return `
-        <h2 class="text-xl font-bold my-4 dark:text-gray-200">${category.title}</h2>
+        <h2 class="text-xl font-bold my-4 dark:text-gray-200">${
+          category.title
+        }</h2>
         <div class="carousel-container">
-          <button class="nav-btn left-4" onclick="scrollCarousel('${category.title}', -1)">&#8249;</button>
-          <div id="${category.title}" class="carousel-track"></div>
-          <button class="nav-btn right-4" onclick="scrollCarousel('${category.title}', 1)">&#8250;</button>
+          <button class="nav-btn left-4" onclick="scrollCarousel('${category.title.replace(
+            / /g,
+            ""
+          )}', -1)">&#8249;</button>
+          <div id="${category.title.replace(
+            / /g,
+            ""
+          )}" class="carousel-track"></div>
+          <button class="nav-btn right-4" onclick="scrollCarousel('${category.title.replace(
+            / /g,
+            ""
+          )}', 1)">&#8250;</button>
         </div>
       `;
       }
@@ -281,7 +320,11 @@
           fetch(`${BASE_URL}${category.endpoint}?api_key=${API_KEY}`)
             .then((response) => response.json())
             .then((data) =>
-              displayMovies(data.results, category.title, category.mediaType)
+              displayMovies(
+                data.results,
+                category.title.replace(/ /g, ""),
+                category.mediaType
+              )
             );
         });
       }
@@ -300,7 +343,7 @@
             }&mediaType=${mediaType}'">
               <div class="rating">⭐ ${movie.vote_average.toFixed(1)}</div>
             </div>
-          `
+                    `
           )
           .join("");
       }
@@ -321,7 +364,7 @@
         const searchResults = document.getElementById("search-results");
 
         if (query.length > 0) {
-          searchResultsContainer.style.display = "block";
+          searchResultsContainer.classList.remove("hidden");
 
           fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&query=${query}`)
             .then((response) => response.json())
@@ -334,7 +377,7 @@
                 )
                 .map(
                   (item) => `
-                    <div class="carousel-item">
+                     <div class="carousel-item">
                       <img src="${IMG_BASE_URL + item.poster_path}" alt="${
                     item.title || item.name
                   }" class="w-36 h-52 object-cover rounded-lg shadow-md cursor-pointer hover:shadow-lg dark:hover:shadow-gray-600/50 transition-shadow" onclick="redirectToPlayer('${
@@ -344,12 +387,12 @@
                         item.vote_average ? item.vote_average.toFixed(1) : "N/A"
                       }</div>
                     </div>
-                  `
+                                  `
                 )
                 .join("");
             });
         } else {
-          searchResultsContainer.style.display = "none";
+          searchResultsContainer.classList.add("hidden");
         }
       }
 
@@ -357,34 +400,6 @@
         window.location.href = `player.html?tmdbId=${id}&mediaType=${media_type}`;
       }
       fetchAndDisplayCategories();
-    </script>
-    <script>
-      // Enhanced dark mode initialization
-      function initializeDarkMode() {
-        const isDarkModePreferred = window.matchMedia(
-          "(prefers-color-scheme: dark)"
-        ).matches;
-        const storedDarkMode = localStorage.getItem("darkMode");
-
-        if (storedDarkMode === null) {
-          localStorage.setItem(
-            "darkMode",
-            isDarkModePreferred ? "true" : "false"
-          );
-        }
-
-        const shouldEnableDark =
-          storedDarkMode === null
-            ? isDarkModePreferred
-            : storedDarkMode === "true";
-
-        document.documentElement.classList.toggle("dark", shouldEnableDark);
-      }
-
-      initializeDarkMode();
-
-      // Rest of your existing scripts remain the same
-      // ... [Keep all your existing JavaScript code] ...
     </script>
   </body>
 </html>
