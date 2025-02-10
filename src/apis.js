@@ -23,37 +23,35 @@ function addUrl(value = "") {
 
   const container = document.createElement("div");
   container.className =
-    "flex items-center space-x-2 bg-white p-2 rounded-lg border";
+    "flex items-center space-x-2 bg-white p-2 rounded-lg border dark:bg-[#1a1a1a] dark:border-gray-600";
 
   const moveUpBtn = document.createElement("button");
   moveUpBtn.innerHTML = "▲";
-  moveUpBtn.className = "text-black px-2 py-1";
+  moveUpBtn.className = "text-black dark:text-white px-2 py-1";
   moveUpBtn.onclick = () => {
     const prev = container.previousElementSibling;
     if (prev) container.parentNode.insertBefore(container, prev);
-    saveData();
   };
 
   const moveDownBtn = document.createElement("button");
   moveDownBtn.innerHTML = "▼";
-  moveDownBtn.className = "text-black px-2 py-1";
+  moveDownBtn.className = "text-black dark:text-white px-2 py-1";
   moveDownBtn.onclick = () => {
     const next = container.nextElementSibling;
     if (next) container.parentNode.insertBefore(next, container);
-    saveData();
   };
 
   const input = document.createElement("input");
   input.type = "text";
   input.value = value;
-  input.className = "url-input border p-3 rounded-lg flex-1 w-full";
+  input.className =
+    "url-input border p-3 rounded-lg flex-1 w-full dark:bg-[#] dark:border-gray-600 dark:bg-[#333333]";
 
   const removeBtn = document.createElement("button");
   removeBtn.textContent = "✕";
-  removeBtn.className = "text-black px-2 py-1";
+  removeBtn.className = "text-black dark:text-white px-2 py-1";
   removeBtn.onclick = () => {
     container.remove();
-    saveData();
   };
 
   container.appendChild(moveUpBtn);
@@ -65,9 +63,22 @@ function addUrl(value = "") {
   document.getElementById("save-btn").onclick = () => {
     saveData();
     const popup = document.createElement("div");
-    popup.className =
-      "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 text-white p-4 rounded-lg";
-    popup.textContent = "Data saved!";
+    popup.innerHTML = `
+      <div class="max-w-4xl mx-auto bg-gray-50 dark:bg-[#1a1a1a] dark:text-white border-t-[7px] border-green-500 text-gray-800 rounded-lg font-[sans-serif]" role="alert">
+        <div class="px-8 py-6 max-w-4xl">
+          <h4 class="font-bold text-lg mb-3">Data Saved!</h4>
+          <p class="text-sm">Your URL list has been saved successfully.</p>
+        </div>
+      </div>
+    `;
+    popup.classList.add(
+      "fixed",
+      "top-20",
+      "left-1/2",
+      "transform",
+      "-translate-x-1/2",
+      "-translate-y-10px"
+    );
     document.body.appendChild(popup);
     setTimeout(() => {
       document.body.removeChild(popup);
@@ -120,6 +131,27 @@ document.getElementById("import-btn").onclick = () => {
     document.getElementById("url-list").innerHTML = "";
     data.forEach((url) => addUrl(url));
     saveData();
+    const popup = document.createElement("div");
+    popup.innerHTML = `
+      <div class="max-w-4xl mx-auto bg-gray-50 dark:bg-[#1a1a1a] dark:text-white border-t-[7px] border-green-500 text-gray-800 rounded-lg font-[sans-serif]" role="alert">
+        <div class="px-8 py-6 max-w-4xl">
+          <h4 class="font-bold text-lg mb-3">Data Imported!</h4>
+          <p class="text-sm">Your URL list has been imported successfully.</p>
+        </div>
+      </div>
+    `;
+    popup.classList.add(
+      "fixed",
+      "top-20",
+      "left-1/2",
+      "transform",
+      "-translate-x-1/2",
+      "-translate-y-10px"
+    );
+    document.body.appendChild(popup);
+    setTimeout(() => {
+      document.body.removeChild(popup);
+    }, 1000);
   } catch (e) {
     alert("Incorrect format");
   }
@@ -158,26 +190,23 @@ document.getElementById("debug-btn").onclick = () => {
     );
     const completeness = `${uniquePlaceholders.length}/4`;
 
-    debugInfo.innerHTML += `<div class="p-3 border rounded-lg bg-gray-50">
-                <strong class="text-black">URL ${
-                  index + 1
-                }:</strong> <a href="${url}" class="text-black underline break-all" target="_blank">${url}</a><br>
-                <span>📍 Placeholders found: <strong>${
-                  uniquePlaceholders.length
-                    ? uniquePlaceholders.join(", ")
-                    : "None"
-                }</strong></span><br>
-                <span>✅ Completeness: <strong>${completeness}</strong>${
+    debugInfo.innerHTML += `<div class="p-3 border rounded-lg bg-gray-50 dark:bg-[#25282a] dark:border-gray-600 dark:text-white">
+        <strong class="text-black dark:text-white">URL ${
+          index + 1
+        }:</strong> <a href="${url}" class="text-black underline break-all dark:text-white" target="_blank">${url}</a><br>
+        <span>📍 Placeholders found: <strong>${
+          uniquePlaceholders.length ? uniquePlaceholders.join(", ") : "None"
+        }</strong></span><br>
+        <span>✅ Completeness: <strong>${completeness}</strong>${
       missing.length ? ` (❌ Missing: ${missing.join(", ")})` : ""
     }</span><br>
-                <span>🔍 Valid: <strong>${
-                  uniquePlaceholders.length === placeholderTags.length
-                    ? "Yes"
-                    : "No"
-                }</strong></span>
-            </div>`;
+        <span>🔍 Valid: <strong>${
+          uniquePlaceholders.length === placeholderTags.length ? "Yes" : "No"
+        }</strong></span>
+      </div>`;
   });
-  debugInfo.innerHTML += `<div class="text-center mt-4 text-gray-600">💾 Data stored in cookies as 'urlList'</div>`;
+
+  debugInfo.innerHTML += `<div class="text-center mt-4 text-gray-600 dark:text-gray-400">💾 Data stored in cookies as 'urlList'</div>`;
   document.getElementById("debug-panel").classList.remove("hidden");
 };
 

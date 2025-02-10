@@ -90,7 +90,7 @@ async function loadEpisodes(seasonNumber) {
     elements["playlist"].innerHTML = episodes
       .map(
         ({ episode_number, name }) =>
-          `<div class="episode-item p-2 bg-gray-100 rounded cursor-pointer" data-episode="${episode_number}" data-season="${seasonNumber}"><strong>Ep ${episode_number}:</strong> ${name}</div>`
+          `<div class="episode-item p-2 bg-gray-100 rounded cursor-pointer dark:bg-[#333333] dark:text-white highlight" data-episode="${episode_number}" data-season="${seasonNumber}"><strong>Ep ${episode_number}:</strong> ${name}</div>`
       )
       .join("");
     updateUI();
@@ -228,12 +228,22 @@ function populateServerOptions() {
     .join("");
 }
 
+async function fetchTVInfo() {
+  const res = await fetch(
+    `https://api.themoviedb.org/3/tv/${tmdbId}?api_key=${apiKey}`
+  );
+  const data = await res.json();
+  document.getElementById("movie-title").textContent = data.name;
+  document.getElementById("episode-info").textContent = data.overview;
+}
+
 populateServerOptions();
+fetchTVInfo();
 
 const closeButton = document.createElement("button");
 closeButton.textContent = "Close";
 closeButton.className =
-  "p-2 bg-black text-white rounded mt-2 w-full hover:bg-red-700";
+  "cursor-pointer p-2 bg-black text-white rounded mt-2 w-full hover:bg-red-700";
 closeButton.style.transition = "background-color 0.3s";
 closeButton.addEventListener("mouseout", () => {
   closeButton.style.backgroundColor = "";

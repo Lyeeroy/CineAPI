@@ -22,7 +22,7 @@ function addUrl(value = "") {
 
   const container = document.createElement("div");
   container.className =
-    "flex items-center space-x-2 bg-white p-2 rounded-lg border";
+    "flex items-center space-x-2 bg-white p-2 rounded-lg border dark:bg-[#25282a] dark:text-white dark:border-gray-600";
 
   const moveUpBtn = document.createElement("button");
   moveUpBtn.innerHTML = "▲";
@@ -30,7 +30,6 @@ function addUrl(value = "") {
   moveUpBtn.onclick = () => {
     const prev = container.previousElementSibling;
     if (prev) container.parentNode.insertBefore(container, prev);
-    saveData();
   };
 
   const moveDownBtn = document.createElement("button");
@@ -39,20 +38,19 @@ function addUrl(value = "") {
   moveDownBtn.onclick = () => {
     const next = container.nextElementSibling;
     if (next) container.parentNode.insertBefore(next, container);
-    saveData();
   };
 
   const input = document.createElement("input");
   input.type = "text";
   input.value = value;
-  input.className = "url-input border p-3 rounded-lg flex-1";
+  input.className =
+    "url-input border p-3 rounded-lg flex-1 dark:bg-[#25282a] dark:text-white dark:border-gray-600";
 
   const removeBtn = document.createElement("button");
   removeBtn.textContent = "✕";
   removeBtn.className = "text-black px-2 py-1";
   removeBtn.onclick = () => {
     container.remove();
-    saveData();
   };
 
   container.appendChild(moveUpBtn);
@@ -61,28 +59,20 @@ function addUrl(value = "") {
   container.appendChild(removeBtn);
   document.getElementById("url-list").appendChild(container);
 
-  input.addEventListener("input", saveData);
+  document.getElementById("save-btn").onclick = () => {
+    saveData();
+    const popup = document.createElement("div");
+    popup.className =
+      "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 dark:bg-green-800 text-white p-4 rounded-lg z-1000";
+    popup.textContent = "Data saved!";
+    document.body.appendChild(popup);
+    setTimeout(() => {
+      document.body.removeChild(popup);
+    }, 1000);
+  };
 }
 
 document.getElementById("add-url").onclick = () => addUrl();
-
-document.getElementById("export-btn").onclick = () => {
-  const data = btoa(JSON.stringify(getUrlList()));
-  document.getElementById("import-input").value = data;
-};
-
-document.getElementById("import-btn").onclick = () => {
-  try {
-    const data = JSON.parse(
-      atob(document.getElementById("import-input").value)
-    );
-    document.getElementById("url-list").innerHTML = "";
-    data.forEach((url) => addUrl(url));
-    saveData();
-  } catch (e) {
-    alert("Incorrect format");
-  }
-};
 
 document.getElementById("debug-btn").onclick = () => {
   const debugInfo = document.getElementById("debug-info");
@@ -97,10 +87,10 @@ document.getElementById("debug-btn").onclick = () => {
     );
     const completeness = `${uniquePlaceholders.length}/4`;
 
-    debugInfo.innerHTML += `<div class="p-3 border rounded-lg bg-gray-50">
-        <strong class="text-black">URL ${
+    debugInfo.innerHTML += `<div class="p-3 border rounded-lg bg-gray-50 dark:bg-[#25282a] dark:border-gray-600 dark:text-white">
+        <strong class="text-black dark:text-white">URL ${
           index + 1
-        }:</strong> <a href="${url}" class="text-black underline break-all" target="_blank">${url}</a><br>
+        }:</strong> <a href="${url}" class="text-black underline break-all dark:text-white" target="_blank">${url}</a><br>
         <span>📍 Placeholders found: <strong>${
           uniquePlaceholders.length ? uniquePlaceholders.join(", ") : "None"
         }</strong></span><br>
