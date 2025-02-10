@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CineAPI</title>
     <link rel="icon" href="ico/capi.ico" type="image/x-icon" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="dist/styles.css" />
 
     <script>
       if (localStorage.getItem("darkMode") === null) {
@@ -96,29 +96,12 @@
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         background: #404040;
       }
-
-      .search-bar-container {
-        background: rgba(255, 255, 255, 0.05);
-        padding: 5px;
-        border-radius: 30px;
-        max-width: 600px;
-        margin: auto;
-      }
-
-      .search-bar {
-        background: rgba(255, 255, 255, 0.08);
-        color: white;
-        padding: 15px 20px;
-        border: none;
-        border-radius: 30px;
-        width: 100%;
-        outline: none;
-        font-size: 16px;
-      }
     </style>
   </head>
 
-  <body class="bg-white text-gray-900 dark:bg-[#121212] dark:text-gray-200 p-4">
+  <body
+    class="bg-gray-200 text-gray-900 dark:bg-[#121212] dark:text-gray-200 p-4"
+  >
     <div class="bg-transparent flex items-center justify-end z-1000">
       <div class="relative">
         <button
@@ -198,15 +181,17 @@
     </div>
 
     <div class="text-center my-6">
-      <h1 class="text-3xl font-bold dark:text-gray-200">
+      <h1 class="text-3xl dark:text-gray-200 mb-8">
         What would you like to watch today?
       </h1>
-      <div class="search-bar-container mt-4">
+      <div
+        class="bg-gradient-to-r from-[#b8b8b8] to-[#b1b1b1] dark:bg-gradient-to-r dark:from-[#1c1c1c] dark:to-[#2c2c2c] p-1 rounded-full max-w-[600px] mx-auto"
+      >
         <input
           id="search-bar"
           type="text"
           placeholder="What do you want to watch?"
-          class="search-bar dark:placeholder-gray-400"
+          class="bg-[rgba(255,255,255,0.08)] text-black dark:bg-[rgba(255,255,255,0.08)] dark:text-white p-[15px_20px] border-none rounded-full w-full outline-none text-lg"
           oninput="searchMovies()"
         />
       </div>
