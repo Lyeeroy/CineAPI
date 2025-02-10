@@ -11,6 +11,7 @@
       if (localStorage.getItem("darkMode") === null) {
         localStorage.setItem("darkMode", "true");
       }
+      // Initialize dark mode on page load
       document.documentElement.classList.toggle(
         "dark",
         localStorage.getItem("darkMode") === "true"
@@ -181,6 +182,19 @@
           </ul>
         </div>
       </div>
+
+      <script>
+        document
+          .getElementById("menuButton")
+          .addEventListener("click", function () {
+            document.getElementById("menu").classList.toggle("hidden");
+          });
+
+        function toggleDarkMode() {
+          const isDark = document.documentElement.classList.toggle("dark");
+          localStorage.setItem("darkMode", isDark);
+        }
+      </script>
     </div>
 
     <div class="text-center my-6">
@@ -193,7 +207,7 @@
           type="text"
           placeholder="What do you want to watch?"
           class="search-bar dark:placeholder-gray-400"
-          oninput="debounceSearch()"
+          oninput="searchMovies()"
         />
       </div>
     </div>
@@ -201,19 +215,9 @@
     <div id="search-results-container" class="hidden">
       <h2 class="text-xl font-bold my-4 dark:text-gray-200">Search Results</h2>
       <div class="carousel-container">
-        <button
-          class="nav-btn left-4"
-          onclick="scrollCarousel('search-results', -1)"
-        >
-          &#8249;
-        </button>
+        <button class="nav-btn left-4">&#8249;</button>
         <div id="search-results" class="carousel-track"></div>
-        <button
-          class="nav-btn right-4"
-          onclick="scrollCarousel('search-results', 1)"
-        >
-          &#8250;
-        </button>
+        <button class="nav-btn right-4">&#8250;</button>
       </div>
     </div>
 
@@ -260,26 +264,6 @@
         { title: "On TV", endpoint: "/tv/on_the_air", mediaType: "tv" },
       ];
 
-      const menuButton = document.getElementById("menuButton");
-      const menu = document.getElementById("menu");
-      const searchBar = document.getElementById("search-bar");
-      const searchResultsContainer = document.getElementById(
-        "search-results-container"
-      );
-      const searchResults = document.getElementById("search-results");
-      const categoriesContainer = document.getElementById(
-        "categories-container"
-      );
-
-      menuButton.addEventListener("click", () =>
-        menu.classList.toggle("hidden")
-      );
-
-      function toggleDarkMode() {
-        const isDark = document.documentElement.classList.toggle("dark");
-        localStorage.setItem("darkMode", isDark);
-      }
-
       function createCategorySection(category) {
         return `
         <h2 class="text-xl font-bold my-4 dark:text-gray-200">${category.title}</h2>
@@ -291,24 +275,35 @@
       `;
       }
 
+      function fetchAndDisplayCategories() {
+        const container = document.getElementById("categories-container");
+        categories.forEach((category) => {
+          container.innerHTML += createCategorySection(category);
+          fetch(`${BASE_URL}${category.endpoint}?api_key=${API_KEY}`)
+            .then((response) => response.json())
+            .then((data) =>
+              displayMovies(data.results, category.title, category.mediaType)
+            );
+        });
+      }
+
       function displayMovies(movies, containerId, mediaType) {
         const container = document.getElementById(containerId);
-        const movieHTML = movies
+        container.innerHTML = movies
           .filter((movie) => movie.poster_path)
           .map(
             (movie) => `
-          <div class="carousel-item">
-            <img src="${IMG_BASE_URL + movie.poster_path}" alt="${
+            <div class="carousel-item">
+              <img src="${IMG_BASE_URL + movie.poster_path}" alt="${
               movie.title || movie.name
-            }"
-                 class="w-36 h-52 object-cover rounded-lg shadow-md cursor-pointer hover:shadow-lg dark:hover:shadow-gray-600/50 transition-shadow"
-                 onclick="redirectToPlayer('${movie.id}', '${mediaType}')">
-            <div class="rating">⭐ ${movie.vote_average.toFixed(1)}</div>
-          </div>
-        `
+            }" class="w-36 h-52 object-cover rounded-lg shadow-md cursor-pointer hover:shadow-lg dark:hover:shadow-gray-600/50 transition-shadow" onclick="window.location.href='player.html?tmdbId=${
+              movie.id
+            }&mediaType=${mediaType}'">
+              <div class="rating">⭐ ${movie.vote_average.toFixed(1)}</div>
+            </div>
+          `
           )
           .join("");
-        container.innerHTML = movieHTML;
       }
 
       function scrollCarousel(id, direction) {
@@ -319,27 +314,20 @@
         });
       }
 
-      function redirectToPlayer(id, media_type) {
-        window.location.href = `player.html?tmdbId=${id}&mediaType=${media_type}`;
-      }
-
-      function debounce(func, delay) {
-        let timeoutId;
-        return function (...args) {
-          clearTimeout(timeoutId);
-          timeoutId = setTimeout(() => func.apply(this, args), delay);
-        };
-      }
-
-      const searchMovies = debounce(function () {
-        const query = searchBar.value.trim();
+      function searchMovies() {
+        const query = document.getElementById("search-bar").value.trim();
+        const searchResultsContainer = document.getElementById(
+          "search-results-container"
+        );
+        const searchResults = document.getElementById("search-results");
 
         if (query.length > 0) {
-          searchResultsContainer.classList.remove("hidden");
+          searchResultsContainer.style.display = "block";
+
           fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&query=${query}`)
             .then((response) => response.json())
             .then((data) => {
-              const searchResultsHTML = data.results
+              searchResults.innerHTML = data.results
                 .filter(
                   (item) =>
                     item.poster_path &&
@@ -347,46 +335,28 @@
                 )
                 .map(
                   (item) => `
-                <div class="carousel-item">
-                  <img src="${IMG_BASE_URL + item.poster_path}" alt="${
+                    <div class="carousel-item">
+                      <img src="${IMG_BASE_URL + item.poster_path}" alt="${
                     item.title || item.name
-                  }"
-                       class="w-36 h-52 object-cover rounded-lg shadow-md cursor-pointer hover:shadow-lg dark:hover:shadow-gray-600/50 transition-shadow"
-                       onclick="redirectToPlayer('${item.id}', '${
-                    item.media_type
-                  }')">
-                  <div class="rating">⭐ ${
-                    item.vote_average ? item.vote_average.toFixed(1) : "N/A"
-                  }</div>
-                </div>
-              `
+                  }" class="w-36 h-52 object-cover rounded-lg shadow-md cursor-pointer hover:shadow-lg dark:hover:shadow-gray-600/50 transition-shadow" onclick="redirectToPlayer('${
+                    item.id
+                  }', '${item.media_type}')">
+                      <div class="rating">⭐ ${
+                        item.vote_average ? item.vote_average.toFixed(1) : "N/A"
+                      }</div>
+                    </div>
+                  `
                 )
                 .join("");
-              searchResults.innerHTML = searchResultsHTML;
             });
         } else {
-          searchResultsContainer.classList.add("hidden");
-          searchResults.innerHTML = "";
+          searchResultsContainer.style.display = "none";
         }
-      }, 300);
-
-      function debounceSearch() {
-        searchMovies();
       }
 
-      function fetchAndDisplayCategories() {
-        let categoriesHTML = "";
-        categories.forEach((category) => {
-          categoriesHTML += createCategorySection(category);
-          fetch(`${BASE_URL}${category.endpoint}?api_key=${API_KEY}`)
-            .then((response) => response.json())
-            .then((data) =>
-              displayMovies(data.results, category.title, category.mediaType)
-            );
-        });
-        categoriesContainer.innerHTML = categoriesHTML;
+      function redirectToPlayer(id, media_type) {
+        window.location.href = `player.html?tmdbId=${id}&mediaType=${media_type}`;
       }
-
       fetchAndDisplayCategories();
     </script>
   </body>
