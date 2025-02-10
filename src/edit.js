@@ -22,11 +22,11 @@ function addUrl(value = "") {
 
   const container = document.createElement("div");
   container.className =
-    "flex items-center space-x-2 bg-white p-2 rounded-lg border dark:bg-[#25282a] dark:text-white dark:border-gray-600";
+    "flex items-center space-x-2 bg-white p-2 rounded-lg border dark:bg-[#1a1a1a] dark:text-white dark:border-gray-600";
 
   const moveUpBtn = document.createElement("button");
   moveUpBtn.innerHTML = "▲";
-  moveUpBtn.className = "text-black px-2 py-1";
+  moveUpBtn.className = "text-black dark:text-white px-2 py-1 cursor-pointer";
   moveUpBtn.onclick = () => {
     const prev = container.previousElementSibling;
     if (prev) container.parentNode.insertBefore(container, prev);
@@ -34,7 +34,7 @@ function addUrl(value = "") {
 
   const moveDownBtn = document.createElement("button");
   moveDownBtn.innerHTML = "▼";
-  moveDownBtn.className = "text-black px-2 py-1";
+  moveDownBtn.className = "text-black dark:text-white px-2 py-1 cursor-pointer";
   moveDownBtn.onclick = () => {
     const next = container.nextElementSibling;
     if (next) container.parentNode.insertBefore(next, container);
@@ -48,7 +48,7 @@ function addUrl(value = "") {
 
   const removeBtn = document.createElement("button");
   removeBtn.textContent = "✕";
-  removeBtn.className = "text-black px-2 py-1";
+  removeBtn.className = "text-black dark:text-white px-2 py-1 cursor-pointer";
   removeBtn.onclick = () => {
     container.remove();
   };

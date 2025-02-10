@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CineAPI</title>
+    <link rel="icon" href="ico/capi.ico" type="image/x-icon" />
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
@@ -334,19 +335,17 @@
                 )
                 .map(
                   (item) => `
-                  <div class="carousel-item">
-                    <img src="${IMG_BASE_URL + item.poster_path}" alt="${
+                    <div class="carousel-item">
+                      <img src="${IMG_BASE_URL + item.poster_path}" alt="${
                     item.title || item.name
-                  }" class="w-36 h-52 object-cover rounded-lg shadow-md cursor-pointer hover:shadow-lg dark:hover:shadow-gray-600/50 transition-shadow" onclick="window.location.href='player.html?tmdbId=${
+                  }" class="w-36 h-52 object-cover rounded-lg shadow-md cursor-pointer hover:shadow-lg dark:hover:shadow-gray-600/50 transition-shadow" onclick="redirectToPlayer('${
                     item.id
-                  }&mediaType=${item.media_type}&name=${encodeURIComponent(
-                    item.title || item.name
-                  )}'">
-                    <div class="rating">⭐ ${
-                      item.vote_average ? item.vote_average.toFixed(1) : "N/A"
-                    }</div>
-                  </div>
-                `
+                  }', '${item.media_type}')">
+                      <div class="rating">⭐ ${
+                        item.vote_average ? item.vote_average.toFixed(1) : "N/A"
+                      }</div>
+                    </div>
+                  `
                 )
                 .join("");
             });
@@ -355,6 +354,9 @@
         }
       }
 
+      function redirectToPlayer(id, media_type) {
+        window.location.href = `player.html?tmdbId=${id}&mediaType=${media_type}`;
+      }
       fetchAndDisplayCategories();
     </script>
   </body>

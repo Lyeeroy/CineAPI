@@ -27,7 +27,7 @@ function addUrl(value = "") {
 
   const moveUpBtn = document.createElement("button");
   moveUpBtn.innerHTML = "▲";
-  moveUpBtn.className = "text-black dark:text-white px-2 py-1";
+  moveUpBtn.className = "text-black dark:text-white px-2 py-1 cursor-pointer";
   moveUpBtn.onclick = () => {
     const prev = container.previousElementSibling;
     if (prev) container.parentNode.insertBefore(container, prev);
@@ -35,7 +35,7 @@ function addUrl(value = "") {
 
   const moveDownBtn = document.createElement("button");
   moveDownBtn.innerHTML = "▼";
-  moveDownBtn.className = "text-black dark:text-white px-2 py-1";
+  moveDownBtn.className = "text-black dark:text-white px-2 py-1 cursor-pointer";
   moveDownBtn.onclick = () => {
     const next = container.nextElementSibling;
     if (next) container.parentNode.insertBefore(next, container);
@@ -49,7 +49,7 @@ function addUrl(value = "") {
 
   const removeBtn = document.createElement("button");
   removeBtn.textContent = "✕";
-  removeBtn.className = "text-black dark:text-white px-2 py-1";
+  removeBtn.className = "text-black dark:text-white px-2 py-1 cursor-pointer";
   removeBtn.onclick = () => {
     container.remove();
   };
