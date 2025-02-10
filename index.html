@@ -3,22 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
     <title>CineAPI</title>
     <link rel="icon" href="ico/capi.ico" type="image/x-icon" />
     <script src="https://cdn.tailwindcss.com"></script>
-
     <script>
-      if (localStorage.getItem("darkMode") === null) {
-        localStorage.setItem("darkMode", "true");
-      }
-      // Initialize dark mode on page load
-      document.documentElement.classList.toggle(
-        "dark",
-        localStorage.getItem("darkMode") === "true"
-      );
+      tailwind.config = {
+        darkMode: "class",
+      };
     </script>
 
     <style>
+      :root {
+        color-scheme: dark light;
+      }
+
       .carousel-container {
         position: relative;
         display: flex;
@@ -358,6 +357,34 @@
         window.location.href = `player.html?tmdbId=${id}&mediaType=${media_type}`;
       }
       fetchAndDisplayCategories();
+    </script>
+    <script>
+      // Enhanced dark mode initialization
+      function initializeDarkMode() {
+        const isDarkModePreferred = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+        const storedDarkMode = localStorage.getItem("darkMode");
+
+        if (storedDarkMode === null) {
+          localStorage.setItem(
+            "darkMode",
+            isDarkModePreferred ? "true" : "false"
+          );
+        }
+
+        const shouldEnableDark =
+          storedDarkMode === null
+            ? isDarkModePreferred
+            : storedDarkMode === "true";
+
+        document.documentElement.classList.toggle("dark", shouldEnableDark);
+      }
+
+      initializeDarkMode();
+
+      // Rest of your existing scripts remain the same
+      // ... [Keep all your existing JavaScript code] ...
     </script>
   </body>
 </html>
