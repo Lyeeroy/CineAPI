@@ -56,13 +56,22 @@
         Settings
       </h1>
 
-      <div class="tabs transition duration-500 ease-in-out flex items-center">
-        <button class="tab active" data-tab="url-management">
+      <div
+        name="scrollabletabs"
+        class="tabs transition duration-500 ease-in-out flex items-start whitespace-nowrap overflow-x-auto touch-pan-x [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] space-x-4 h-10 min-h-[48px]"
+      >
+        <button class="tab active h-full py-2.5" data-tab="url-management">
           URL Management
         </button>
-        <button class="tab" data-tab="import-export">Import / Export</button>
-        <button class="tab" data-tab="documentation">Documentation</button>
-        <button class="tab" data-tab="appearance">Appearance</button>
+        <button class="tab h-full py-2.5" data-tab="import-export">
+          Import / Export
+        </button>
+        <button class="tab h-full py-2.5" data-tab="documentation">
+          Documentation
+        </button>
+        <button class="tab h-full py-2.5" data-tab="appearance">
+          Appearance
+        </button>
       </div>
 
       <div id="url-management" class="tab-content active">
