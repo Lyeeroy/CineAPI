@@ -242,10 +242,19 @@
               id="api_full"
               class="text-black dark:text-gray-200 cursor-pointer"
               href="javascript:void(0)"
-              onclick="window.location.href='/apis.html'"
             >
               ▢
             </a>
+            <script>
+              const link2 = document.getElementById("api_full");
+              const path2 = window.location.pathname
+                .split("/")
+                .slice(0, -1)
+                .join("/");
+              link2.addEventListener("click", () => {
+                window.location.href = `${path2}/apis.html`;
+              });
+            </script>
             <button
               id="close-frame"
               class="text-black dark:text-gray-200 cursor-pointer"
