@@ -37,6 +37,9 @@
         .responsive-container {
           height: 90vh;
         }
+        #playlist {
+          height: 80px;
+        }
       }
 
       @media (min-width: 641px) and (max-width: 1024px) and (orientation: portrait) {
@@ -54,7 +57,7 @@
     </style>
   </head>
 
-  <body id="main-body" class="dark:bg-[#121212]">
+  <body id="main-body dark:bg-[#121212]">
     <div
       class="lg:flex flex-col md:flex-row h-[100dvh] max-h-screen min-h-0 dark:bg-[#121212] dark:text-gray-200"
     >
@@ -70,7 +73,7 @@
       <div
         class="md:flex md:flex-col w-full bg-white p-4 shadow-xl lg:w-96 overflow-y-auto dark:bg-[#1a1a1a] dark:border-[#333]"
       >
-        <div class="flex border-b border-gray-300 dark:border-[#333] p-2 mb-2">
+        <div class="flex pb-2 mb-2">
           <div
             id="movie-info"
             class="dark:border-[#333] w-full overflow-hidden flex items-center"
@@ -79,18 +82,18 @@
             <h2 id="movie-title" class="dark:text-gray-200 text-2xl pr-2"></h2>
           </div>
 
-          <div class="bg-transparent flex items-center justify-end z-20">
-            <div class="relative">
+          <div class="bg-transparent items-center justify-end z-20">
+            <div class="flex">
               <button
                 id="menuButton"
-                class="cursor-pointer text-gray-900 bg-gray-200 dark:text-gray-200 dark:bg-[#333] p-3 rounded-full focus:outline-none hover:bg-gray-300 dark:hover:bg-[#2e2e2e] transition-colors"
+                class="cursor-pointer text-gray-900 bg-gray-200 dark:text-gray-200 dark:bg-[#333] px-4 py-2 rounded-l-lg focus:outline-none hover:bg-gray-300 dark:hover:bg-[#2e2e2e] transition-colors"
               >
                 &#9776;
               </button>
 
               <div
                 id="menu"
-                class="hidden absolute right-0 mt-2 w-48 rounded-lg shadow-lg bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#333]"
+                class="hidden absolute right-17 mt-11 w-48 rounded-lg shadow-lg bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#333]"
               >
                 <ul>
                   <li
@@ -142,6 +145,13 @@
                   </li>
                 </ul>
               </div>
+              <button
+                onclick="window.location.href = 'index.html'"
+                id="closeButton"
+                class="cursor-pointer text-white bg-black dark:text-gray-200 dark:bg-[#121212] px-4 py-2 rounded-r-lg focus:outline-none hover:bg-gray-300 dark:hover:bg-[#0a0a0a] transition-colors"
+              >
+                ✕
+              </button>
             </div>
 
             <script>
@@ -184,7 +194,7 @@
           </button>
           <button
             id="editButton"
-            class="ml-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-[#333] transition dark:bg-[#333] dark:hover:bg-[#404040] cursor-pointer"
+            class="ml-2 px-4 py-2 bg-black text-white rounded-lg hover:opacity-80 transition dark:bg-[#121212] dark:hover:bg-[#0a0a0a] cursor-pointer"
           >
             Edit
           </button>
@@ -203,7 +213,7 @@
 
         <div
           id="playlist"
-          class="space-y-2 overflow-y-auto flex-1 sm:max-h-[50vh] lg:max-h-none"
+          class="space-y-2 overflow-y-auto flex-1 h-[50vh] sm:h-full"
         ></div>
 
         <div
@@ -211,13 +221,13 @@
         >
           <button
             id="prev-episode"
-            class="cursor-pointer w-1/2 p-2 mr-1 bg-black text-white rounded dark:bg-[#333] hover:opacity-80"
+            class="cursor-pointer w-1/2 p-2 mr-1 bg-black text-white rounded dark:bg-[#121212] dark:hover:bg-[#0a0a0a] hover:bg-[#121212]"
           >
             Previous
           </button>
           <button
             id="next-episode"
-            class="cursor-pointer w-1/2 p-2 ml-1 bg-black text-white rounded dark:bg-[#333] hover:opacity-80"
+            class="cursor-pointer w-1/2 p-2 ml-1 bg-black text-white rounded dark:bg-[#121212] dark:hover:bg-[#0a0a0a] hover:bg-[#121212]"
           >
             Next
           </button>

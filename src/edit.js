@@ -48,7 +48,8 @@ function addUrl(value = "") {
 
   const removeBtn = document.createElement("button");
   removeBtn.textContent = "✕";
-  removeBtn.className = "text-black dark:text-white px-2 py-1 cursor-pointer";
+  removeBtn.className =
+    "text-black dark:text-white lg:px-2 py-1 cursor-pointer";
   removeBtn.onclick = () => {
     container.remove();
   };

@@ -13,8 +13,11 @@
   "license": "ISC",
   "devDependencies": {
     "autoprefixer": "^10.4.20",
-    "postcss": "^8.5.1",
-    "tailwindcss": "^4.0.5"
+    "postcss": "^8.5.2",
+    "tailwindcss": "^4.0.6"
   },
-  "_comment": "Remember to run 'npm run build' to compile Tailwind CSS before launching the project. 'npm run watch' to watch for changes."
+  "_comment": "Remember to run 'npm run build' to compile Tailwind CSS before launching the project. 'npm run watch' to watch for changes.",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.0.6"
+  }
 }
